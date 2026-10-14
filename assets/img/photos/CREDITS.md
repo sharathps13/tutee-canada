@@ -134,3 +134,17 @@ subject — the hero is a landscape with no people in it.
 Appropriately-licensed photos of people are scarce on Commons (nearly all are
 CC-BY-SA), so recognisable Canadian places were the better trade. If you want
 students in the hero, buy a stock licence and drop in a 1400×779 file.
+
+---
+
+## assets/img/cities/ — hero destination card (added Oct 2026)
+
+Downloaded from Wikimedia Commons at 1600px and re-encoded (JPEG q82). Attribution is shown on the card and in the footer.
+
+| File | Commons file | Author | Licence |
+|---|---|---|---|
+| toronto.jpg | File:Toronto Waterfront, CN Tower 6277.jpg | ImagePerson | CC BY 4.0 |
+| vancouver.jpg | File:Skyline of Vancouver, BC.jpg | Quintin Soloviev | CC BY 4.0 |
+| montreal.jpg | File:Montreal skyline 2011.jpg | abdallahh | CC BY 2.0 |
+| calgary.jpg | File:Calgary skyline, Canada; October 2019.jpg | Bernard Spragg. NZ | CC0 |
+| ottawa.jpg | File:Canadian Parliament Building from across the Ottawa River - panoramio (2).jpg | A J Butler | CC BY 3.0 |

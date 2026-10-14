@@ -1,5 +1,144 @@
 # Tutee Connect — Canada landing page
 
+## v7 (Oct 2026): recreated from the client reference concept
+
+- Hero skyline (`assets/img/photos/hero-toronto-concept.jpg`), manifesto campus
+  (`campus-concept.jpg`) and the 9 journey thumbnails (`assets/canada/img/journey/`) are cut from
+  the reference concept image supplied by Tutee Connect, upscaled ~3x. They are concept artwork
+  (likely AI-generated): confirm usage rights, and replace with high-res licensed photos before launch.
+- Vertical city list (hero, right), "Watch the leaf journey" replays the intro, city card, rail tooltips
+  with thumbnails like the reference's scroll-journey column.
+
+## v6 (Oct 2026): reference-led refinement
+
+- Ambient red dots removed everywhere; the trail now appears only during the opening flight.
+  Seasons use leaves (and snow in winter) sparingly.
+- More realistic leaf: finely serrated margins, deeper crimson with a warm translucent centre,
+  subtler veins, a gloss highlight. Small depth leaves replace particles in the hero.
+- Hero typography follows the reference: Your / Canadian / Journey / Starts *Here.*, a
+  "Study in Canada" leaf kicker, a 01/05 city counter, city card, and "Scroll to explore".
+- Manifesto gains an editorial photograph on the right; the leaf enters on the left.
+- Journey rail is now a curved glowing path with numbered stops and the leaf riding it
+  (shown at ≥1360px so it never overlaps content). The leaf's route ends in the footer.
+
+## v5 (Oct 2026): the leaf travels the whole page
+
+- The hero leaf now follows a scroll-linked route through every section (`STOPS` in royal.js:
+  one stop per section id with x/y viewport position and scale). It shrinks as the story goes
+  on, curves between stops, bursts into red sparks when it reaches a stop, and settles larger
+  beside the final counselling form. Stops sit in the margins so copy stays readable.
+- Floating red glow particles (from the earlier design) are back, across the whole page —
+  denser in the hero.
+- A journey rail (right edge, desktop) shows progress with a mini leaf; each dot links to its
+  section.
+- Hero is brighter and warmer (golden hour), with a city card that updates per city and opens
+  that city in the Destinations atlas.
+
+## v4 (Oct 2026): cinematic leaf
+
+- `leaf.js` now draws a large, detailed leaf (veins, translucency, texture, front/back faces,
+  baked shadow) and runs the hero engine `TCLeaf.hero()`: a designed Bézier flight with 3D
+  flutter, an ember trail (crimson/amber), depth leaves including out-of-focus foreground
+  leaves, cursor parallax, a gust on city change, and a scroll continuation that carries the
+  leaf into the next section. It draws on a fixed canvas (`.leaf-layer`) that always sits
+  *behind* the hero copy and controls.
+- The skyline opens through a light-reveal that follows the leaf; a drifting cloud deck, water
+  shimmer and a leaf-driven glow add depth. "Replay the leaf" re-runs the sequence.
+- Hero city selector (Toronto, Vancouver, Montréal, Calgary, Ottawa) swaps the scene, the
+  coordinates and the city line; "Explore <city>" opens that city in the atlas. Toronto and
+  Montréal use licensed photos; the others use an atlas view until you add a licensed photo
+  (`photo` + `cred` on the `HC` entry in royal.js).
+- No new libraries (no GSAP); everything is vanilla JS + CSS. Reduced motion skips the leaf.
+
+## v3 (Oct 2026): "Maple-leaf journey"
+
+- **Hero:** loader → a lit maple leaf (drawn in code, `assets/canada/js/leaf.js`) drifts through
+  a blue-hour sky; where it lands, the blurred sky resolves into the real Toronto photograph
+  with a light bloom. Landmark pins (CN Tower, Rogers Centre, Toronto Islands, downtown) sit on
+  the photo; "Replay" re-runs the sequence. Reduced motion skips straight to the final frame.
+- **No illustrations remain in use.** Seasons and the final section use the licensed photos,
+  colour-graded in CSS, with live particles (falling leaves, snow, light). `scene-*.svg` are now
+  unused and can be deleted.
+- **Logo:** official artwork, colours untouched, with a thin ivory keyline (CSS drop-shadow) so it
+  reads on dark backgrounds. A reversed/light official logo would be the ideal replacement.
+- **New section:** Scholarships & financial support (`#scholarships`); FAQ now sits before
+  Student experiences. Finance keeps the estimator and work rules.
+- The hero photo is 1166×1143; a 2400px+ licensed Toronto skyline at blue hour would make the
+  hero sharper — swap `students-campus.jpg` (and update credits).
+
+## October 2026 (v2): "Royal Canada" redesign
+
+`index.html` now uses `assets/canada/css/royal.css` + `assets/canada/js/royal.js`
+(Playfair Display + Manrope, SIL OFL, self-hosted). The v1 files (`north.css`, `north.js`,
+Fraunces/Inter fonts, `canada-map.svg`) are no longer referenced and can be deleted.
+`index-classic.html` is the original generated page; `universities.html` is unchanged.
+
+Sections: hero (3 destinations, cursor parallax) · manifesto · destinations atlas (map +
+city dossiers, Ontario–Québec zoom) · university explorer (19 profiles on a map) + search
+of all 1,135 DLIs · programme pathway builder · scroll-driven journey · finance (estimator,
+scholarships, loans, work rules) · study-permit stepper · four seasons + student-life topics ·
+stories (consent-only placeholders — add real ones in `STORIES` in royal.js) · FAQ · form.
+
+- Hero/seasons/final scenes are original vector illustrations generated as SVG
+  (`assets/canada/img/scene-*.svg`, hero layers inlined). No new photographs were added —
+  the sandbox could not download images. Swap in licensed photos when available.
+- `royal-map.svg`: Natural Earth outline + lakes © OpenStreetMap contributors (ODbL,
+  credited in the footer). Marker positions come from the same projection; `CORRIDOR`
+  in royal.js sets the Ontario–Québec zoom.
+- University founding years and websites: from each university's official site.
+  QS/PGWP/type/strengths come from `universities-data.js`.
+- Facts checked on canada.ca, Oct 2026: C$23,448 proof of funds (from 1 Sep 2026),
+  24 h/week off-campus work, PAL/TAL exemption for master's/PhD at public DLIs from
+  1 Jan 2026, PGWP up to 3 years incl. master's ≥ 8 months, language proof required.
+- Lead form contract unchanged (`/api/enquiry`); level/intake selects and anything picked
+  on the page are appended to `destination`.
+
+---
+
+## October 2026: new "Your Next Chapter Is North" home page
+
+`index.html` is now a standalone, hand-written page with its own visual identity
+(forest/midnight, maple red, ivory; Fraunces serif + Inter, both SIL OFL, self-hosted).
+It does **not** use `main.css`/`main.js`; the previous generated page is kept untouched as
+`index-classic.html`. `universities.html` is unchanged and still links back to
+`index.html#contact`, `#services` and `#testimonials`, which all exist on the new page.
+
+```
+index.html                       new Canada home page
+index-classic.html               previous generated page (kept for rollback)
+assets/canada/css/north.css      all styles for index.html
+assets/canada/js/north.js        map, explorer, path finder, cost planner, journey, life, FAQ, lead form
+assets/canada/img/canada-map.svg Natural Earth 1:50m outline (public domain), Lambert conformal conic
+assets/canada/fonts/*.woff2      Fraunces 400/400i/600, Inter 400/500/600
+```
+
+- **Map markers** are percentages produced by the same projection that drew the SVG
+  (d3-geo `geoConicConformal().rotate([96,0]).parallels([49,77])`, fitted to 1000×760), so
+  they are geographically accurate. Regenerate both together if you change the map.
+- **Explorer and city panels** read `assets/js/universities-data.js` (IRCC DLI list). Counts are
+  computed live, nothing is typed in. Subject filtering only applies to the 50 universities
+  with curated `programs`; the UI says so. No fees, intakes or rankings are invented.
+- **Cost planner**: tuition presets are the University of Waterloo's published Sept 2026
+  international first-year estimates (uwaterloo.ca, updated 17 Apr 2026). Living costs are
+  entered by the student and compared with IRCC's proof-of-funds minimum of **C$23,448**
+  (1 person, outside Quebec, applications from 1 Sep 2026 — verified on canada.ca, Oct 2026).
+  No average living-cost breakdown is shown because we could not source one reliably.
+- **Immigration copy** re-checked on canada.ca in October 2026: 24 h/week off-campus work,
+  PAL/TAL exemption for master's/doctoral at public DLIs from 1 Jan 2026, CAQ for Quebec.
+- **Lead form** posts to `/api/enquiry` with the same fields as the other pages (`name`, `email`,
+  `country_code`+`phone_number` → `phone`, `destination`, `from_name`, `botcheck`). The
+  path finder and the explorer's "Enquire" buttons write their summary into `destination`.
+  A university picked on `universities.html` (localStorage `selectedUniversity`) pre-fills it too.
+- **Photos**: only the four licensed photos already in `assets/img/photos` are used. Vancouver,
+  Calgary, Ottawa and Halifax use labelled vector illustrations; replace them with CC0/CC-BY
+  photos when available (edit `LIFE` in `north.js`, and update CREDITS.md + footer credit).
+- **Testimonials**: placeholders only, by design. Add approved stories in the `[data-stories]` block.
+- CSP-safe: no inline scripts, no third-party hosts.
+
+---
+
+## Previous generated page (now index-classic.html)
+
 A static rebuild of the USA landing page (https://pageus.netlify.app/#/) for the Canadian market.
 Same layout, same Tailwind classes, same animations — Canadian content.
 
