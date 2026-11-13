@@ -24,6 +24,8 @@
  * Environment variables (set in Netlify → Site settings → Environment variables):
  *
  *   RESEND_API_KEY              required  Resend key, starts `re_`. Server-side only.
+ *   APPS_SCRIPT_URL             optional  leads Apps Script Web app /exec URL (Google Sheets + email)
+ *   APPS_SCRIPT_TOKEN           optional  that site's token (LEADS_TOKEN_<COUNTRY> in the script)
  *   SUPABASE_URL                optional  https://<ref>.supabase.co
  *   SUPABASE_SERVICE_ROLE_KEY   optional  service_role key. Server-side ONLY —
  *                                         it bypasses RLS. Never ship to a browser.
@@ -308,6 +310,74 @@ async function storeInSupabase(f, country) {
   } catch { return null; }
 }
 
+/* ------------------------------------------------ Google Sheets (Apps Script)
+ * When APPS_SCRIPT_URL and APPS_SCRIPT_TOKEN are set in this site's Netlify
+ * environment, every lead is also forwarded to the Tutee Connect leads Apps
+ * Script, which adds a row to the country's tab of "Website Leads" and emails
+ * business@tuteeconnect.com. The URL and token never reach the browser.
+ * The Canada form folds its extra fields into `destination`
+ * ("… · State: X · Course: Y · Call time: Z · University: U"); they are split
+ * back out here into the sheet's own columns. */
+const SHEET_FIELD_RE = /^(State|Course|Call time|University|Intake|Level):\s*(.+)$/i;
+
+export function sheetLead(f, country) {
+  const parts = String(f.destination || '').split(' · ').map((x) => x.trim()).filter(Boolean);
+  const got = {}; const rest = [];
+  for (const part of parts) {
+    const m = part.match(SHEET_FIELD_RE);
+    if (m) got[m[1].toLowerCase()] = m[2]; else rest.push(part);
+  }
+  const head = rest.join(' · ');
+  const callback = /^Callback request/i.test(head);
+  const interest = head.replace(/^Callback request\s*[—-]\s*/i, '');
+  // "Canada — University of Toronto" (picked from the university explorer) is a shortlist
+  let picked = /^Canada\s*[—-]\s*(.+)$/i.exec(interest);
+  if (picked && /^(General enquiry|Intake plan)/i.test(picked[1])) picked = null;
+  const shortlist = got.university && !/^not decided$/i.test(got.university)
+    ? got.university : (picked ? picked[1] : '');
+  const notes = [];
+  if (interest && !/General enquiry/i.test(interest)) notes.push('Interested in: ' + interest);
+  if (got.intake) notes.push('Intake: ' + got.intake);
+  if (got.level) notes.push('Level: ' + got.level);
+  return {
+    country: country || 'Canada',
+    name: f.name,
+    phone: f.phone,
+    email: f.email,
+    state: got.state || '',
+    shortlist,
+    course: got.course || '',
+    lead_source: (country || 'Canada') + ' Landing Page' + (callback ? ' – Callback request' : ''),
+    call_time: got['call time'] || (callback ? 'Callback requested' : ''),
+    destination: interest,
+    message: notes.join(' · '),
+    page: f.page,
+  };
+}
+
+async function sendToSheet(f, country) {
+  const url = (process.env.APPS_SCRIPT_URL || '').trim();
+  const token = (process.env.APPS_SCRIPT_TOKEN || '').trim();
+  if (!url || !token) return null;                 // not configured — skip
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), SEND_TIMEOUT_MS);
+  try {
+    // Apps Script answers a POST with a redirect to the result; fetch follows it.
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, ...sheetLead(f, country) }),
+      redirect: 'follow',
+      signal: ctl.signal,
+    });
+    const out = await res.json().catch(() => ({}));
+    if (!out.success) throw new Error(`apps script refused the lead: ${out.message || 'HTTP ' + res.status}`);
+    return { mailed: out.mailed !== false };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 const OK_MESSAGE = 'Profile submitted successfully! We will contact you soon.';
 
 /** Core logic, shared by the Netlify handler and the local dev server.
@@ -331,14 +401,27 @@ export async function handle(rawBody, headers = {}) {
     console.error(`enquiry: supabase insert failed: ${exc.message}`);
   }
 
-  // 2. notify the business inbox
-  let messageId = '';
-  let emailed = false;
+  // 2. Google Sheets row + email through the leads Apps Script (when configured)
+  let sheeted = false;
+  let sheetMailed = false;
   try {
-    messageId = await sendViaResend(buildEmail(fields, country));
-    emailed = true;
+    const r = await sendToSheet(fields, country);
+    if (r) { sheeted = true; sheetMailed = r.mailed; }
   } catch (exc) {
-    console.error(`enquiry: send refused: ${exc.message}`);
+    console.error(`enquiry: sheet forward failed: ${exc.message}`);
+  }
+  if (sheeted) stored = true;
+
+  // 3. notify the business inbox — skipped when the Apps Script already emailed it
+  let messageId = '';
+  let emailed = sheetMailed;
+  if (!emailed) {
+    try {
+      messageId = await sendViaResend(buildEmail(fields, country));
+      emailed = true;
+    } catch (exc) {
+      console.error(`enquiry: send refused: ${exc.message}`);
+    }
   }
 
   if (!stored && !emailed) {
@@ -375,6 +458,7 @@ export function health() {
     provider: 'resend',
     runtime: 'netlify-functions',
     resend_configured: Boolean((process.env.RESEND_API_KEY || '').trim()),
+    sheet_configured: Boolean((process.env.APPS_SCRIPT_URL || '').trim() && (process.env.APPS_SCRIPT_TOKEN || '').trim()),
     supabase_configured: Boolean((process.env.SUPABASE_URL || '').trim()
       && (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim()),
     from: (process.env.MAIL_FROM || DEFAULT_FROM).trim(),
