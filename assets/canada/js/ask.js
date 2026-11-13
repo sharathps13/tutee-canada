@@ -147,7 +147,7 @@
           m.appendChild(r);
         }
         if (opts.cta) m.appendChild(el('div', 'cta',
-          '<a class="ask-cta" href="#contact">Book free counselling</a><a class="ask-cta ghost" href="https://wa.me/917010902329" target="_blank" rel="noopener">WhatsApp a counsellor</a>'));
+          '<a class="ask-cta" href="#contact">Book free counselling</a><a class="ask-cta ghost" href="https://wa.me/917358364959" target="_blank" rel="noopener">WhatsApp a counsellor</a>'));
         scrollDown(); busy = false; refreshSuggestions();
       });
     }, reduce ? 0 : 520 + Math.min(opts.html.length, 400));

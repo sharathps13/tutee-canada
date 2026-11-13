@@ -547,7 +547,7 @@
         .then(function (r) { return r.json().catch(function () { return { success: false }; }); })
         .then(function (res) {
           if (res && res.success) { var d = data.destination; status('ok'); form.reset(); setDestination(d); }
-          else status('err', (res && res.message) || 'Something went wrong. Please try again, or WhatsApp us on +91 701-090-2329.');
+          else status('err', (res && res.message) || 'Something went wrong. Please try again, or WhatsApp us on +91 735-836-4959.');
         })
         .catch(function () { status('err', 'Network error. Please check your connection and try again.'); })
         .then(function () { btn.disabled = false; btn.innerHTML = label; });

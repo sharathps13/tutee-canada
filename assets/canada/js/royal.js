@@ -13,7 +13,8 @@
   var fine = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var fold = function (s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); };
-  var fmt = function (n) { return Math.round(n).toLocaleString('en-CA'); };
+  var NF = window.Intl ? new Intl.NumberFormat('en-CA') : null; // one formatter, reused (counters call this every frame)
+  var fmt = function (n) { return NF ? NF.format(Math.round(n)) : Math.round(n).toLocaleString('en-CA'); };
   var UNIS = window.CA_UNIVERSITIES || [];
   var provOf = function (u) { var p = u.location.split(','); return p[p.length - 1].trim(); };
   var cityOf = function (u) { return u.location.split(',')[0].trim(); };
@@ -42,15 +43,27 @@
     }
     return false;
   }
+  /* Page and hero heights change rarely: measure them only when the layout resizes, never per frame */
+  var docH = 0, heroH = 0, heroEl = document.querySelector('[data-hero]'), isEU = document.body.classList.contains('eu-page');
+  function measureHdr() { docH = document.documentElement.scrollHeight - innerHeight; heroH = heroEl ? heroEl.offsetHeight : 0; }
+  measureHdr();
+  if ('ResizeObserver' in window) new ResizeObserver(function () { measureHdr(); }).observe(document.body); else addEventListener('resize', measureHdr);
+  /* What is behind the header? Hit-testing is costly on phones, so sample it at most ~5x a second
+   * while scrolling and once more when scrolling stops. */
+  var darkT = 0, darkAt = 0;
+  function checkDark() { darkT = 0; darkAt = Date.now(); darkY = window.scrollY; hdr.classList.toggle('on-dark', underDark()); }
   function onScroll() {
-    var y = window.scrollY, h = document.documentElement.scrollHeight - innerHeight;
-    hdr.classList.toggle('solid', y > 40 || document.body.classList.contains('eu-page'));
-    var hh = document.querySelector('[data-hero]'); hdr.classList.toggle('past-hero', !hh || document.body.classList.contains('eu-page') || y > hh.offsetHeight - 90);
+    var y = window.scrollY, h = docH;
+    hdr.classList.toggle('solid', y > 40 || isEU);
+    hdr.classList.toggle('past-hero', !heroEl || isEU || y > heroH - 90);
     if (y > 120 && y > lastY + 4 && !document.body.classList.contains('menu') && Date.now() > navLock) hdr.classList.add('hide');
     if (y < lastY - 4 || y <= 120) hdr.classList.remove('hide');
-    if (Math.abs(y - darkY) > 40 || y < 50) { darkY = y; hdr.classList.toggle('on-dark', underDark()); }
+    if (Math.abs(y - darkY) > 40 || y < 50) {
+      if (Date.now() - darkAt > 200 || y < 50) checkDark();
+      else { clearTimeout(darkT); darkT = setTimeout(checkDark, 120); }
+    }
     lastY = y;
-    bar.style.transform = 'scaleX(' + (h > 0 ? y / h : 0) + ')';
+    bar.style.transform = 'scaleX(' + (h > 0 ? Math.min(1, y / h) : 0) + ')';
   }
   window.addEventListener('scroll', rafOnce(onScroll), { passive: true });
   onScroll();
@@ -124,14 +137,15 @@
     ['programmes', .045, .84, .32], ['admissions', .955, .2, .3], ['journey', .3, .5, .3], ['finance', .95, .24, .3], ['scholarships', .045, .9, .26],
     ['permit', .955, .7, .25], ['careers', .045, .2, .24], ['life', .52, .9, .3], ['faq', .04, .86, .22], ['testimonials', .95, .28, .18], ['contact', .5, .17, .4], ['site-footer', .9, .42, .24]
   ];
-  var STOPS_M = { top: [.72, .16, 1], manifesto: [.86, .12, .46], destinations: [.9, .1, .36], universities: [.92, .12, .32], programmes: [.9, .1, .3], admissions: [.9, .1, .28], journey: [.92, .12, .28], finance: [.9, .1, .28], scholarships: [.9, .1, .26], permit: [.92, .1, .24], careers: [.9, .1, .24], life: [.9, .1, .26], faq: [.92, .1, .22], testimonials: [.9, .1, .2], contact: [.82, .12, .36], 'site-footer': [.86, .2, .24] };
+  // phones: the leaf keeps to the right edge (half off-screen), hopping between the top and the middle, so it never sits on the text
+  var STOPS_M = { top: [.74, .15, 1], manifesto: [.9, .16, .5], destinations: [.92, .18, .46], universities: [.9, .16, .46], programmes: [.92, .18, .44], admissions: [.9, .16, .44], journey: [.92, .18, .44], finance: [.9, .16, .44], scholarships: [.92, .18, .42], permit: [.9, .16, .42], careers: [.92, .18, .42], life: [.9, .16, .42], faq: [.92, .18, .4], testimonials: [.9, .16, .4], contact: [.9, .14, .5], 'site-footer': [.9, .18, .44] };
   function leafWaypoints() {
     var mob = innerWidth < 760;
     return STOPS.map(function (w) {
       var el = document.getElementById(w[0]); if (!el) return null;
       var r = el.getBoundingClientRect(), top = r.top + scrollY, m = STOPS_M[w[0]];
       var c = w[0] === 'top' ? innerHeight * .5 : top + Math.min(r.height, innerHeight * 1.4) * .5;
-      return { id: w[0], c: c, x: mob ? m[0] : w[1], y: mob ? m[1] : w[2], s: mob ? m[2] : w[3] };
+      return { id: w[0], c: c, x: mob ? Math.min(.94, Math.max(.06, w[1])) : w[1], y: w[2], s: mob ? (w[0] === 'top' ? 1 : Math.max(.62, w[3] * 1.9)) : w[3] }; // phones follow the same flight path as desktop
     }).filter(Boolean);
   }  function showCopy() { document.body.classList.add('loaded'); $$('[data-hero-title] .ln').forEach(function (l) { l.classList.add('in'); }); if (hero) hero.classList.add('revealed'); }
   if (L && layer && !reduce) engine = L.hero({ canvas: layer, hero: hero, pointerTarget: window, waypoints: leafWaypoints });
@@ -143,9 +157,9 @@
   if (reduce || !loader) { if (loader) loader.hidden = true; showCopy(); }
   else {
     var img0 = $('[data-h-img]'), t0 = Date.now(), booted = false;
-    var go = function () { if (booted) return; booted = true; setTimeout(boot, Math.max(0, 250 - (Date.now() - t0))); };
+    var go = function () { if (booted) return; booted = true; setTimeout(boot, Math.max(0, 120 - (Date.now() - t0))); };
     if (img0.complete) go(); else { img0.addEventListener('load', go); img0.addEventListener('error', go); }
-    setTimeout(go, 1200);
+    setTimeout(go, 650);
   }
 
   var HC = {
@@ -192,8 +206,7 @@
     var tilt = $('[data-hx-tilt]'), aura = $('[data-hx-aura]'), tx = 0, ty = 0, cx = 0, cy = 0, ax = innerWidth * .62, ay = innerHeight * .45, aX = ax, aY = ay, tick = false, inCard = false;
     function frame() {
       cx += (tx - cx) * .12; cy += (ty - cy) * .12; aX += (ax - aX) * .08; aY += (ay - aY) * .08;
-      tilt.style.transform = 'perspective(1400px) rotateX(' + (-cy * 7).toFixed(2) + 'deg) rotateY(' + (cx * 9).toFixed(2) + 'deg)';
-      card.style.setProperty('--px', (-cx * 14).toFixed(1) + 'px'); card.style.setProperty('--py', (-cy * 10).toFixed(1) + 'px');
+      // the card stays still (3D tilt and photo parallax removed — they shimmered on hover); only the glare follows the pointer
       card.style.setProperty('--gx', (50 + cx * 50).toFixed(1) + '%'); card.style.setProperty('--gy', (50 + cy * 50).toFixed(1) + '%');
       aura.style.transform = 'translate(' + (aX - 350).toFixed(0) + 'px,' + (aY - 350).toFixed(0) + 'px)';
       if (Math.abs(tx - cx) + Math.abs(ty - cy) + Math.abs(ax - aX) + Math.abs(ay - aY) > .002) requestAnimationFrame(frame); else tick = false;
@@ -239,9 +252,9 @@
       wps.forEach(function (w, i) { var t = (POS[i] * 100).toFixed(1) + '%'; if (w.style.top !== t) w.style.top = t; });
       trackH = track.offsetHeight; posT = Date.now();
     }
-    var litY = -999;
+    var litY = -999, litAt = 0, litT = 0, railMQ = matchMedia('(min-width:1180px)');
     function upd() {
-      if (!nav.offsetWidth && !nav.offsetHeight) return; // rail hidden at this size: nothing to do
+      if (!railMQ.matches || document.body.classList.contains('eu-page')) return; // rail hidden at this size: nothing to do
       if (Date.now() - posT > 1500) place();
       var f = Math.min(1, Math.max(0, scrollY / docMax()));
       var py = Math.round(f * trackH); if (py !== planeY) { planeY = py; plane.style.transform = 'translate3d(0,' + py + 'px,0)'; } // compositor-only move
@@ -253,7 +266,8 @@
         hud.textContent = RAIL[ai][1]; nav.classList.remove('ping'); void nav.offsetWidth; nav.classList.add('ping');
       }
       nav.classList.toggle('landed', f > .985);
-      if (Math.abs(scrollY - litY) > 32 || f > .985 || f < .01) { litY = scrollY; nav.classList.toggle('on-light', isLight()); } // hit-testing is costly: sample, don't run every frame
+      if ((Math.abs(scrollY - litY) > 32 && Date.now() - litAt > 150) || f > .985 || f < .01) { litY = scrollY; litAt = Date.now(); nav.classList.toggle('on-light', isLight()); } // hit-testing is costly: sample, don't run every frame
+      else if (Math.abs(scrollY - litY) > 32) { clearTimeout(litT); litT = setTimeout(function () { litAt = 0; upd(); }, 180); } // and once more when scrolling stops
       nav.classList.add('show');
     }
     function isLight() {
@@ -517,6 +531,9 @@
   ];
   var uniState = { q: '', area: '', level: '', sel: 'uoft' }, uniMap, uniMarks = {};
   var uList = $('[data-u-list]'), profile = $('[data-profile]');
+  /* counselling form: the University picker lists the same 19 top universities */
+  var uPick = $('[data-uni-pick]');
+  if (uPick) U.slice().sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (u) { var o = document.createElement('option'); o.textContent = u.name; uPick.appendChild(o); });
   function uniMatches(u) {
     var q = fold(uniState.q).trim();
     if (q && fold(u.name + ' ' + u.city + ' ' + u.prov).indexOf(q) < 0) return false;
@@ -538,7 +555,11 @@
     var east = u.x > 59 && u.y > 73.5;
     if (uniMap.view() === 'corridor' && !east) { uniMap.setView('all'); setSeg($('.u-map .seg'), 'all'); }
     $$('button', uList).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-id') === id); });
-    if (scrollList) { var b = $('[data-id="' + id + '"]', uList); if (b) uList.scrollTo({ top: b.offsetTop - uList.offsetTop - 10, behavior: reduce ? 'auto' : 'smooth' }); }
+    if (scrollList) { var b = $('[data-id="' + id + '"]', uList); if (b) {
+      var sideways = uList.scrollWidth > uList.clientWidth + 4; // phones: the list is a sideways slider
+      if (sideways) uList.scrollTo({ left: uList.scrollLeft + b.getBoundingClientRect().left - uList.getBoundingClientRect().left - 20, behavior: reduce ? 'auto' : 'smooth' });
+      else uList.scrollTo({ top: b.offsetTop - uList.offsetTop - 10, behavior: reduce ? 'auto' : 'smooth' });
+    } }
     renderProfile(u);
   }
   function renderUnis(autoSelect) {
@@ -563,9 +584,35 @@
     profile.addEventListener('click', function (e) {
       if (!e.target.closest('[data-u-enquire]')) return;
       var u = U.filter(function (x) { return x.id === uniState.sel; })[0];
-      setDestination('Canada — ' + u.name + (uniState.level ? ' (' + uniState.level + ')' : '')); goTo('contact', '#l-name');
+      setDestination('Canada — ' + u.name + (uniState.level ? ' (' + uniState.level + ')' : '')); if (uPick) { uPick.value = u.name; uPick.dispatchEvent(new Event('change')); } goTo('contact', '#l-name');
     });
     renderUnis(); selectUni('uoft');
+
+    /* Phones: the list is a sideways slider, so show that it slides — arrow buttons, a
+     * "Swipe" cue and a position counter. Hidden by CSS on wider screens. */
+    var sw = document.createElement('div'); sw.className = 'u-swipe';
+    sw.innerHTML = '<button type="button" class="u-sw-btn" data-sw="-1" aria-label="Previous universities"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>' +
+      '<span class="u-sw-cue"><span class="u-sw-hand" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></svg></span><span data-sw-txt>Swipe to see more</span></span>' +
+      '<button type="button" class="u-sw-btn" data-sw="1" aria-label="Next universities"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>';
+    uList.parentNode.insertBefore(sw, uList.nextSibling);
+    var swTxt = $('[data-sw-txt]', sw), swPrev = $('[data-sw="-1"]', sw), swNext = $('[data-sw="1"]', sw), swTouched = false;
+    function swUpdate() {
+      var cards = $$('.u-item', uList), n = cards.length, max = uList.scrollWidth - uList.clientWidth;
+      sw.hidden = n < 2 || max < 4;
+      if (sw.hidden) return;
+      var first = 0, L = uList.getBoundingClientRect().left;
+      cards.forEach(function (c, k) { if (c.getBoundingClientRect().left - L < 40) first = k; });
+      swPrev.disabled = uList.scrollLeft < 4; swNext.disabled = uList.scrollLeft > max - 4;
+      swTxt.textContent = swTouched ? (first + 1) + ' of ' + n + ' — swipe for more' : 'Swipe to see all ' + n;
+    }
+    sw.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-sw]'); if (!b) return; swTouched = true;
+      var c = $('.u-item', uList), step = c ? c.getBoundingClientRect().width + 10 : uList.clientWidth * .8;
+      uList.scrollBy({ left: step * +b.getAttribute('data-sw'), behavior: reduce ? 'auto' : 'smooth' });
+    });
+    var swQ = 0; uList.addEventListener('scroll', function () { if (uList.scrollLeft > 4) { swTouched = true; sw.classList.add('used'); } if (!swQ) swQ = requestAnimationFrame(function () { swQ = 0; swUpdate(); }); }, { passive: true });
+    new MutationObserver(function () { uList.scrollLeft = 0; swUpdate(); }).observe(uList, { childList: true });
+    addEventListener('resize', swUpdate); swUpdate();
   }
 
   /* directory of all 1,135 */
@@ -595,11 +642,11 @@
 
   /* =========================================================== programmes */
   var LEVELS = [
-    { k: 'dip', l: 'Diploma / certificate', route: 'Usually one to three years at a public college or polytechnic, focused on applied, job-ready skills.', pg: 'Non-degree programmes must meet IRCC’s field-of-study requirement for PGWP eligibility, and the institution and programme must be PGWP-eligible.', types: ['College', 'Public'] },
-    { k: 'ba', l: "Bachelor's", route: 'Usually three to four years at a university; many include optional or built-in co-op work terms.', pg: 'PGWP length usually follows programme length; a programme of two years or more can lead to a PGWP of up to three years.', types: ['U15', 'Public'] },
-    { k: 'pgc', l: 'Postgraduate certificate', route: 'Typically one year at a college, after a degree or diploma — a common route to specialise quickly.', pg: 'A one-year programme usually leads to a PGWP of about the same length, and the field-of-study requirement applies.', types: ['College', 'Public'] },
-    { k: 'ma', l: "Master's", route: 'One to two years: course-based (often with co-op or a project) or research-based with a thesis.', pg: 'Graduates of eligible master’s programmes of at least eight months can receive a PGWP of up to three years. Master’s students at public DLIs don’t need a PAL/TAL from 1 Jan 2026.', types: ['U15', 'Public'] },
-    { k: 'phd', l: 'Doctorate', route: 'Typically four or more years of research, usually with funding through assistantships or supervisor grants.', pg: 'Doctoral students at public DLIs don’t need a PAL/TAL from 1 Jan 2026. Funding is decided by the programme.', types: ['U15', 'Public'] }
+    { k: 'dip', yrs: '1–3 yrs', bar: 45, l: 'Diploma / certificate', route: 'Usually one to three years at a public college or polytechnic, focused on applied, job-ready skills.', pg: 'Non-degree programmes must meet IRCC’s field-of-study requirement for PGWP eligibility, and the institution and programme must be PGWP-eligible.', types: ['College', 'Public'] },
+    { k: 'ba', yrs: '3–4 yrs', bar: 75, l: "Bachelor's", route: 'Usually three to four years at a university; many include optional or built-in co-op work terms.', pg: 'PGWP length usually follows programme length; a programme of two years or more can lead to a PGWP of up to three years.', types: ['U15', 'Public'] },
+    { k: 'pgc', yrs: '~1 yr', bar: 22, l: 'Postgraduate certificate', route: 'Typically one year at a college, after a degree or diploma — a common route to specialise quickly.', pg: 'A one-year programme usually leads to a PGWP of about the same length, and the field-of-study requirement applies.', types: ['College', 'Public'] },
+    { k: 'ma', yrs: '1–2 yrs', bar: 38, l: "Master's", route: 'One to two years: course-based (often with co-op or a project) or research-based with a thesis.', pg: 'Graduates of eligible master’s programmes of at least eight months can receive a PGWP of up to three years. Master’s students at public DLIs don’t need a PAL/TAL from 1 Jan 2026.', types: ['U15', 'Public'] },
+    { k: 'phd', yrs: '4+ yrs', bar: 100, l: 'Doctorate', route: 'Typically four or more years of research, usually with funding through assistantships or supervisor grants.', pg: 'Doctoral students at public DLIs don’t need a PAL/TAL from 1 Jan 2026. Funding is decided by the programme.', types: ['U15', 'Public'] }
   ];
   var FIELDS = [
     { k: 'eng', l: 'Engineering', d: 'Civil, mechanical, electrical, software, chemical and more. Accredited engineering degrees in Canada are reviewed by Engineers Canada’s accreditation board.', re: /engineering/i },
@@ -615,25 +662,47 @@
     { k: '', l: 'Anywhere', p: null }, { k: 'on', l: 'Ontario', p: ['Ontario'] }, { k: 'bc', l: 'British Columbia', p: ['British Columbia'] }, { k: 'qc', l: 'Québec', p: ['Quebec'] },
     { k: 'ab', l: 'Alberta', p: ['Alberta'] }, { k: 'pr', l: 'Prairies', p: ['Manitoba', 'Saskatchewan'] }, { k: 'at', l: 'Atlantic', p: ['Nova Scotia', 'New Brunswick', 'Prince Edward Island', 'Newfoundland and Labrador'] }
   ];
+  var FICON = {
+    eng: '<path d="M12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+    cs: '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
+    bus: '<path d="M3 7h18v12H3zM8 7V5h8v2M3 12h18"/>',
+    health: '<path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10zM9 11h6M12 8v6"/>',
+    data: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    bio: '<path d="M7 3c0 6 10 6 10 12s-10 3-10 6M17 3c0 6-10 6-10 12M8 7h8M8 17h8"/>',
+    env: '<path d="M5 19c8 0 14-6 14-14C11 5 5 11 5 19zM5 19l8-8"/>',
+    hosp: '<path d="M4 18h16M6 18a6 6 0 0112 0M12 6v2M3 21h18"/>'
+  };
   var B = { level: 'ma', area: 'cs', region: '' }, result = $('[data-result]');
   function pickRow(key, items) {
     var box = $('[data-b=' + key + ']');
-    box.innerHTML = items.map(function (it) { return '<button type="button" aria-pressed="' + (B[key] === it.k) + '" data-v="' + it.k + '">' + esc(it.l) + '</button>'; }).join('');
-    box.addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (!b) return; B[key] = b.getAttribute('data-v'); $$('button', box).forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); renderResult(); });
+    box.innerHTML = items.map(function (it) { return '<button type="button" aria-pressed="' + (B[key] === it.k) + '" data-v="' + it.k + '">' + (key === 'area' && FICON[it.k] ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + FICON[it.k] + '</svg>' : '') + '<span>' + esc(it.l) + '</span>' + (it.yrs ? '<small>' + it.yrs + '</small>' : '') + '</button>'; }).join('');
+    box.addEventListener('click', function (e) { var b = e.target.closest('[data-v]'); if (!b) return; B[key] = b.getAttribute('data-v'); $$('button', box).forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); var st = box.closest('.b-step'); if (st) { st.classList.remove('ping'); void st.offsetWidth; st.classList.add('ping'); } renderResult(true); });
   }
-  function renderResult() {
+  function renderResult(animate) {
     var L = LEVELS.filter(function (x) { return x.k === B.level; })[0], F = FIELDS.filter(function (x) { return x.k === B.area; })[0], R = REGIONS.filter(function (x) { return x.k === B.region; })[0];
     var pool = UNIS.filter(function (u) { return (!R.p || R.p.indexOf(provOf(u)) > -1) && u.pgwp !== 'No' && L.types.indexOf(u.type) > -1; });
     var strong = UNIS.filter(function (u) { return u.ranked && (!R.p || R.p.indexOf(provOf(u)) > -1) && F.re.test(u.programs) && L.types.indexOf(u.type) > -1; }).slice(0, 5);
     var collegeLevel = B.level === 'dip' || B.level === 'pgc';
-    result.innerHTML = '<div class="pane"><p class="kicker">' + esc(L.l) + ' · ' + esc(R.l) + '</p><p class="big">' + esc(F.l) + ' at <em>' + esc(L.l.toLowerCase()) + '</em> level</p><p class="lede" style="font-size:16px">' + esc(F.d) + '</p>' +
-      '<h5>What the route looks like</h5><p style="margin:0;color:var(--muted)">' + esc(L.route) + '</p>' +
+    var place = R.l === 'Anywhere' ? 'Canada' : R.l, code = 'TC·' + B.level.toUpperCase() + '·' + F.k.toUpperCase() + (B.region ? '·' + B.region.toUpperCase() : '·CA');
+    result.innerHTML = '<div class="tk" data-tk>' +
+      '<div class="tk-top"><span>Pathway ticket</span><span class="tk-no">' + code + '</span></div>' +
+      '<div class="tk-route"><div><small>Level</small><b>' + esc(L.l) + '</b></div><i aria-hidden="true"></i><div><small>Field</small><b>' + esc(F.l) + '</b></div><i aria-hidden="true"></i><div><small>Region</small><b>' + esc(R.l) + '</b></div></div>' +
+      '<p class="big">' + esc(F.l) + ' at <em>' + esc(L.l.toLowerCase()) + '</em> level</p><p class="lede tk-d">' + esc(F.d) + '</p>' +
+      '<div class="tk-stats"><div class="tk-num"><b data-tk-count="' + pool.length + '">' + fmt(pool.length) + '</b><small>institutions on IRCC’s DLI list in ' + esc(place) + ' offer this level and aren’t listed as PGWP-ineligible</small></div>' +
+      '<div class="tk-dur"><small>Typical length</small><b>' + esc(L.yrs) + '</b><span class="tk-bar"><i style="--w:' + L.bar + '%"></i></span></div></div>' +
+      '<div class="tk-tear" aria-hidden="true"></div>' +
+      '<h5>What the route looks like</h5><p class="tk-p">' + esc(L.route) + '</p>' +
       '<h5>' + (collegeLevel ? 'Where to look' : 'Universities known for this area') + '</h5>' +
-      (strong.length && !collegeLevel ? '<ul>' + strong.map(function (u) { return '<li><span>' + esc(u.name) + '</span><span>' + esc(cityOf(u)) + '</span></li>'; }).join('') + '</ul>' :
-        '<p style="margin:0;color:var(--muted)">' + (collegeLevel ? 'Public colleges and polytechnics are the main providers at this level.' : 'We don’t hold curated strength data for this field in this region — a counsellor will search programme by programme.') + '</p>') +
-      '<p class="fine" style="margin-top:12px"><b style="color:var(--ink)">' + fmt(pool.length) + '</b> institutions on IRCC’s DLI list in ' + esc(R.l === 'Anywhere' ? 'Canada' : R.l) + ' are of a type that offers this level and aren’t listed as PGWP-ineligible.</p>' +
-      '<div class="note"><span><b style="color:var(--ink)">PGWP check:</b> ' + esc(L.pg) + '</span></div>' +
+      (strong.length && !collegeLevel ? '<ul>' + strong.map(function (u, n) { return '<li style="--i:' + n + '"><span>' + esc(u.name) + '</span><span>' + esc(cityOf(u)) + '</span></li>'; }).join('') + '</ul>' :
+        '<p class="tk-p">' + (collegeLevel ? 'Public colleges and polytechnics are the main providers at this level.' : 'We don’t hold curated strength data for this field in this region — a counsellor will search programme by programme.') + '</p>') +
+      '<div class="tk-stamp"><b>PGWP check</b><span>' + esc(L.pg) + '</span></div>' +
       '<div class="dz-foot" style="margin-top:24px"><button type="button" class="btn" data-b-go>Get matched programmes <span class="ar">→</span></button><button type="button" class="tlink" data-b-unis>See matching universities</button></div></div>';
+    if (animate && !reduce) {
+      var tk = $('[data-tk]', result); tk.classList.add('reprint');
+      var nEl = $('[data-tk-count]', result), to = +nEl.getAttribute('data-tk-count'), from = result._last || 0, t0 = 0;
+      requestAnimationFrame(function step(t) { t0 = t0 || t; var p = Math.min(1, (t - t0) / 700), e = 1 - Math.pow(1 - p, 3); nEl.textContent = fmt(from + (to - from) * e); if (p < 1) requestAnimationFrame(step); });
+    }
+    result._last = pool.length;
   }
   if (result) {
     pickRow('level', LEVELS); pickRow('area', FIELDS); pickRow('region', REGIONS); renderResult();
@@ -641,7 +710,7 @@
       var L = LEVELS.filter(function (x) { return x.k === B.level; })[0], F = FIELDS.filter(function (x) { return x.k === B.area; })[0], R = REGIONS.filter(function (x) { return x.k === B.region; })[0];
       if (e.target.closest('[data-b-go]')) {
         setDestination('Canada pathway — ' + F.l + ' · ' + L.l + ' · ' + R.l);
-        var lv = $('#l-level'); $$('option', lv).forEach(function (o) { if (o.value && L.l.indexOf(o.value.split(' ')[0]) === 0) lv.value = o.value; });
+        var lv = $('#l-level'); if (lv) $$('option', lv).forEach(function (o) { if (o.value && L.l.indexOf(o.value.split(' ')[0]) === 0) lv.value = o.value; });
         goTo('contact', '#l-name');
       }
       if (e.target.closest('[data-b-unis]')) {
@@ -756,7 +825,7 @@
   var sBox = $('[data-seasons]');
   if (sBox) {
     sBox.insertAdjacentHTML('beforeend', SEASONS.map(function (s, i) {
-      return '<div class="season' + (i === 0 ? ' on' : '') + '" data-k="' + s.k + '" role="tabpanel" id="sp-' + s.k + '" aria-labelledby="sb-' + s.k + '"' + (i ? ' hidden' : '') + '><img src="' + s.img + '" alt="' + esc(s.alt) + '" loading="lazy" decoding="async" decoding="async"><p class="season-cap">' + esc(s.cap) + '</p><div class="season-copy"><div class="inner"><p class="kicker" style="color:var(--ice-2)">' + esc(s.when) + '</p><h3>' + esc(s.h) + '</h3><p>' + esc(s.p) + '</p><ul>' + s.li.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div></div>';
+      return '<div class="season' + (i === 0 ? ' on' : '') + '" data-k="' + s.k + '" role="tabpanel" id="sp-' + s.k + '" aria-labelledby="sb-' + s.k + '"' + (i ? ' hidden' : '') + '><img src="' + s.img + '"' + (/^data:/.test(s.img) ? '' : ' srcset="' + s.img.replace('.webp', '-m.webp') + ' 1200w, ' + s.img + ' 1920w" sizes="(max-width: 899px) 100vw, 90vw"') + ' alt="' + esc(s.alt) + '" loading="lazy" decoding="async"><p class="season-cap">' + esc(s.cap) + '</p><div class="season-copy"><div class="inner"><p class="kicker" style="color:var(--ice-2)">' + esc(s.when) + '</p><h3>' + esc(s.h) + '</h3><p>' + esc(s.p) + '</p><ul>' + s.li.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div></div></div>';
     }).join(''));
     var fxCv = document.createElement('canvas'); fxCv.className = 'season-fx'; fxCv.setAttribute('aria-hidden', 'true'); sBox.appendChild(fxCv);
     var fx = null;
@@ -789,8 +858,10 @@
   var tList = $('[data-topics]'), tCard = $('[data-topic-card]');
   function tShow(i) {
     $$('[role=tab]', tList).forEach(function (b, k) { b.setAttribute('aria-selected', k === i); b.tabIndex = k === i ? 0 : -1; b.classList.remove('run'); if (k === i && tAuto) { void b.offsetWidth; b.classList.add('run'); } });
+    var sel = $$('[role=tab]', tList)[i];
+    if (sel && tList.scrollWidth > tList.clientWidth + 4) tList.scrollTo({ left: tList.scrollLeft + sel.getBoundingClientRect().left - tList.getBoundingClientRect().left - 20, behavior: reduce ? 'auto' : 'smooth' }); // phones: keep the active topic pill in view
     var t = TOPICS[i];
-    var media = t.img ? '<img src="' + t.img + '" alt="' + esc(t.cap) + '" decoding="async">' : '';
+    var media = t.img ? '<img src="' + t.img + '"' + (/^data:/.test(t.img) ? '' : ' srcset="' + t.img.replace('.webp', '-m.webp') + ' 1200w, ' + t.img + ' 1920w" sizes="(max-width: 979px) 100vw, 50vw"') + ' alt="' + esc(t.cap) + '" decoding="async">' : ''; // phones get the 900px photo
     tCard.innerHTML = '<figure class="topic-img" style="margin:0">' + media + '<span class="tp-n">' + t.n + ' / 05</span><span class="tp-tag">' + esc(t.tag) + '</span></figure><div class="topic-txt pane">' + t.p.map(function (x) { return '<p>' + esc(x) + '</p>'; }).join('') + '</div>';
   }
   if (tList) {
@@ -895,22 +966,64 @@
       $$('.field', form).forEach(function (f) { f.classList.remove('bad'); f.removeAttribute('aria-invalid'); });
       if (field) { field.classList.add('bad'); field.setAttribute('aria-invalid', 'true'); field.focus(); }
     }
-    // inline validation: check each contact field when the user leaves it, message shown beside the field
-    var RULES = { 'l-name': [function (v) { return v.trim().length >= 2; }, 'Please enter your full name.'], 'l-email': [function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }, 'Please enter a valid email address.'], 'l-phone': [function (v) { return /^[0-9]{7,15}$/.test(v.replace(/\D/g, '')); }, 'Enter 7–15 digits, without the country code.'] };
+    // inline validation: a clear alert under the field when an email or phone number is wrong
+    var DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com', 'live.com', 'rediffmail.com', 'yahoo.co.in', 'protonmail.com', 'aol.com'];
+    function lev(a, b) { var m = [], i, j; for (i = 0; i <= b.length; i++) m[i] = [i]; for (j = 0; j <= a.length; j++) m[0][j] = j;
+      for (i = 1; i <= b.length; i++) for (j = 1; j <= a.length; j++) m[i][j] = b[i - 1] === a[j - 1] ? m[i - 1][j - 1] : Math.min(m[i - 1][j - 1], m[i][j - 1], m[i - 1][j]) + 1; return m[b.length][a.length]; }
+    function emailIssue(v) {
+      v = v.trim(); if (!v) return 'Please enter your email address.';
+      if (/\s/.test(v)) return 'Email addresses can’t contain spaces.';
+      if (!/^[A-Za-z0-9._%+'-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(v) || /\.\./.test(v) || /^\.|\.@|@\./.test(v)) return 'That doesn’t look like a valid email — check it, e.g. name@gmail.com';
+      var dom = v.split('@')[1].toLowerCase();
+      if (DOMAINS.indexOf(dom) < 0) { var best = DOMAINS.filter(function (d) { return lev(dom, d) <= 2; })[0]; if (best) return { msg: 'Did you mean ' + v.split('@')[0] + '@' + best + '?', fix: v.split('@')[0] + '@' + best }; }
+      return '';
+    }
+    // mobile number length by country code (national number, without the leading 0)
+    var PH = { '+91': [10, /^[6-9]/, 'Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9.'], '+971': [9, /^5/, 'UAE mobile numbers have 9 digits and start with 5 (e.g. 50 123 4567).'],
+      '+1': [10, /^[2-9]/, 'Canada/US numbers have 10 digits.'], '+44': [10, /^7/, 'UK mobile numbers have 10 digits after +44 and start with 7.'], '+61': [9, /^4/, 'Australian mobile numbers have 9 digits after +61 and start with 4.'],
+      '+966': [9, /^5/, 'Saudi mobile numbers have 9 digits and start with 5.'], '+974': [8, /^[3567]/, 'Qatar mobile numbers have 8 digits.'], '+965': [8, /^[569]/, 'Kuwait mobile numbers have 8 digits.'],
+      '+968': [8, /^[79]/, 'Oman mobile numbers have 8 digits.'], '+973': [8, /^[36]/, 'Bahrain mobile numbers have 8 digits.'], '+977': [10, /^9/, 'Nepal mobile numbers have 10 digits and start with 9.'],
+      '+94': [9, /^7/, 'Sri Lankan mobile numbers have 9 digits and start with 7.'], '+880': [10, /^1/, 'Bangladeshi mobile numbers have 10 digits and start with 1.'], '+92': [10, /^3/, 'Pakistani mobile numbers have 10 digits and start with 3.'] };
+    function phoneIssue(v) {
+      var raw = v.trim(); if (!raw) return 'Please enter your mobile number.';
+      if (/[^0-9\s()+\-.]/.test(raw)) return 'Use digits only — no letters or symbols.';
+      var cc = ($('[name=country_code]', form) || {}).value || '', d = raw.replace(/\D/g, '');
+      if (cc && d.indexOf(cc.slice(1)) === 0 && d.length > (PH[cc] ? PH[cc][0] : 15)) d = d.slice(cc.length - 1); // typed the country code again
+      d = d.replace(/^0+/, '');
+      if (/^(\d)\1+$/.test(d)) return 'That number doesn’t look real — please check it.';
+      var r = PH[cc];
+      if (r) { if (d.length !== r[0] || !r[1].test(d)) return r[2]; }
+      else if (d.length < 7 || d.length > 15) return 'Please enter a valid mobile number (7–15 digits).';
+      return '';
+    }
+    var RULES = { 'l-name': function (v) { return v.trim().length >= 2 ? '' : 'Please enter your full name.'; }, 'l-email': emailIssue, 'l-phone': phoneIssue };
+    var checks = {};
     Object.keys(RULES).forEach(function (id) {
       var f = $('#' + id, form); if (!f) return;
-      var m = document.createElement('small'); m.className = 'f-err'; m.id = id + '-err'; m.setAttribute('aria-live', 'polite'); f.parentNode.appendChild(m);
+      var host = id === 'l-phone' ? (f.closest('.ph') || f).parentNode : f.parentNode;
+      var m = document.createElement('div'); m.className = 'f-alert'; m.id = id + '-err'; m.setAttribute('role', 'alert'); m.hidden = true; host.appendChild(m);
       f.setAttribute('aria-describedby', m.id);
-      function check() { var good = RULES[id][0](f.value); f.classList.toggle('bad', !good); if (good) f.removeAttribute('aria-invalid'); else f.setAttribute('aria-invalid', 'true'); m.textContent = good ? '' : RULES[id][1]; return good; }
-      f.addEventListener('blur', function () { if (f.value) check(); });
-      f.addEventListener('input', function () { if (f.classList.contains('bad')) check(); });
+      function check(loud) {
+        var r = RULES[id](f.value), msg = typeof r === 'object' ? r.msg : r, good = !msg;
+        f.classList.toggle('bad', !good); if (good) f.removeAttribute('aria-invalid'); else f.setAttribute('aria-invalid', 'true');
+        if (good) { m.hidden = true; m.innerHTML = ''; return true; }
+        m.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2zM12 10v5M12 18v.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span>' + (r && r.fix ? '<button type="button">Use it</button>' : '');
+        m.querySelector('span').textContent = msg; m.hidden = false;
+        if (r && r.fix) m.querySelector('button').addEventListener('click', function () { f.value = r.fix; check(); f.focus(); });
+        if (loud) { var t = id === 'l-phone' ? (f.closest('.ph') || f) : f; t.classList.remove('shake'); void t.offsetWidth; t.classList.add('shake'); }
+        return typeof r === 'object'; // a typo suggestion is a warning, not a blocker
+      }
+      checks[id] = check;
+      f.addEventListener('blur', function () { if (f.value) check(true); });
+      f.addEventListener('input', function () { if (f.classList.contains('bad') || !m.hidden) check(false); });
+      if (id === 'l-phone') { var cc = $('[name=country_code]', form); if (cc) cc.addEventListener('change', function () { if (f.value) check(true); }); }
     });
     form.addEventListener('submit', function (e) {
       e.preventDefault(); status('');
       var data = {}; new FormData(form).forEach(function (v, k) { data[k] = v; });
-      if (String(data.name || '').trim().length < 2) return status('err', 'Please enter your full name.', $('#l-name'));
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email || '')) return status('err', 'Please enter a valid email address.', $('#l-email'));
-      if (!/^[0-9]{7,15}$/.test(String(data.phone_number || '').replace(/\D/g, ''))) return status('err', 'Please enter a valid phone number (7–15 digits).', $('#l-phone'));
+      var firstBad = null;
+      ['l-name', 'l-email', 'l-phone'].forEach(function (id) { if (checks[id] && !checks[id](true) && !firstBad) firstBad = $('#' + id, form); });
+      if (firstBad) { status('err', 'Please correct the highlighted details before sending.'); firstBad.focus(); return; }
       data.phone = (data.country_code || '') + ' ' + (data.phone_number || '');
       delete data.country_code; delete data.phone_number;
       var extra = $$('[data-x]', form).filter(function (s) { return s.value; }).map(function (s) { return s.getAttribute('data-x') + ': ' + s.value; });
@@ -921,9 +1034,9 @@
         .then(function (r) { return r.json().catch(function () { return { success: false }; }); })
         .then(function (res) {
           if (res && res.success) { var d = $('[data-dest-input]', form).value; status('ok'); form.reset(); setDestination(d); }
-          else status('err', (res && res.message) || 'Something went wrong. Please try again, or WhatsApp us on +91 701-090-2329.');
+          else status('err', (res && res.message) || 'Something went wrong. Please try again, or WhatsApp us on +91 735-836-4959.');
         })
-        .catch(function () { status('err', 'Network error. Please check your connection, or WhatsApp us on +91 701-090-2329.'); })
+        .catch(function () { status('err', 'Network error. Please check your connection, or WhatsApp us on +91 735-836-4959.'); })
         .then(function () { btn.disabled = false; btn.innerHTML = label; });
     });
   });
@@ -1001,15 +1114,23 @@
     ];
     var m = 8, intakeBtns = $$('[data-adm-intake] button'), yearSel = $('[data-adm-year]'), note = $('[data-adm-note]');
     function draw() {
-      var y = +yearSel.value, now = new Date(), nowIdx = now.getFullYear() * 12 + now.getMonth(), late = 0;
-      tl.innerHTML = STEPS.map(function (st) {
-        var idx = y * 12 + m + st[0], past = idx < nowIdx; if (past && st[0] <= -5) late++;
-        return '<li class="' + (past ? 'past' : '') + '"><time>' + MS[((idx % 12) + 12) % 12] + ' ' + Math.floor(idx / 12) + '</time><b>' + st[1] + '</b><span>' + st[2] + '</span></li>';
-      }).join('');
+      var y = +yearSel.value, now = new Date(), nowIdx = now.getFullYear() * 12 + now.getMonth(), start = y * 12 + m, prev = -1, fast = false;
+      // every intake still ahead is open: steps whose suggested month has passed are scheduled from this month instead (fast-track)
+      var rows = STEPS.map(function (st, i) {
+        var idx = start + st[0]; if (idx < nowIdx) { idx = nowIdx; fast = true; } if (idx < prev) idx = prev; prev = idx;
+        var lock = i >= 4;
+        return '<li class="' + (lock ? 'lock' : '') + (idx === nowIdx ? ' now' : '') + '"><time>' + (idx === nowIdx ? 'Now' : lock ? 'Step ' + (i + 1) : 'Next') + '</time><b>' + st[1] + '</b></li>';
+      });
+      tl.innerHTML = rows.join('') + '<li class="unl"><a href="#contact" data-adm-unlock><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Unlock my full intake plan — free</a></li>';
       var name = MS[m] === 'Sep' ? 'September' : MS[m] === 'Jan' ? 'January' : 'May';
-      note.innerHTML = late ? '<b>Tight timeline.</b> Some suggested dates for ' + name + ' ' + y + ' have passed. It may still be possible &mdash; or a later intake may be safer. A counsellor can check real deadlines.' : 'Working back from <b>' + name + ' ' + y + '</b>. Start dates and deadlines differ by programme.';
-      note.classList.toggle('warn', !!late);
+      note.innerHTML = fast ? '<b>' + name + ' ' + y + ' is still open.</b> We can start your application this month and fast-track every step &mdash; contact us today to secure your seat.' : '<b>Great timing for ' + name + ' ' + y + '.</b> Start early for the widest choice of programmes and scholarships.';
+      note.classList.remove('warn'); note.classList.add('go');
     }
+    tl.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-adm-unlock]')) return;
+      var name = MS[m] === 'Sep' ? 'September' : MS[m] === 'Jan' ? 'January' : 'May', v = 'Canada — Intake plan: ' + name + ' ' + yearSel.value;
+      $$('[data-dest-input]').forEach(function (i) { i.value = v; }); $$('[data-dest-label]').forEach(function (l) { l.textContent = v; }); $$('[data-dest-clear]').forEach(function (c) { c.hidden = false; });
+    });
     intakeBtns.forEach(function (b) { b.addEventListener('click', function () { m = +b.getAttribute('data-m'); intakeBtns.forEach(function (x) { x.setAttribute('aria-checked', x === b); }); draw(); }); });
     yearSel.addEventListener('change', draw);
     draw();
@@ -1176,4 +1297,103 @@ document.querySelectorAll('.cta2').forEach(function (b) {
   window.TCWarm = function () { while (i < secs.length) measure(secs[i++]); }; // called before jumping to an anchor
   if (document.readyState === 'complete') setTimeout(start, 200); else addEventListener('load', function () { setTimeout(start, 200); });
   addEventListener('resize', function () { if (Math.abs(innerWidth - lastW) < 40) return; lastW = innerWidth; clearTimeout(t); t = setTimeout(start, 400); });
+})();
+
+/* Glow CTAs: add the running rim light to every primary call-to-action (styles: royal.css v90).
+ * Buttons created later (forms, profiles) get it too. */
+(function () {
+  var SEL = '.btn:not(.line):not(.ice):not(.ghost):not(.light), .cta2, .eu2';
+  function rim(b) {
+    if (b.querySelector(':scope > .glow-rim')) return;
+    var g = document.createElement('span'); g.className = 'glow-rim'; g.setAttribute('aria-hidden', 'true');
+    g.innerHTML = '<span class="gr-ring"><i></i><i></i></span><span class="gr-spill"><i></i></span>';
+    var sh = document.createElement('span'); sh.className = 'cta-shine'; sh.setAttribute('aria-hidden', 'true'); sh.innerHTML = '<i></i>';
+    b.appendChild(sh); b.appendChild(g);
+  }
+  function all(root) { (root || document).querySelectorAll(SEL).forEach(rim); }
+  all();
+  var q = 0;
+  new MutationObserver(function (ms) {
+    for (var i = 0; i < ms.length; i++) for (var j = 0; j < ms[i].addedNodes.length; j++) {
+      var n = ms[i].addedNodes[j];
+      if (n.nodeType === 1 && !n.classList.contains('glow-rim') && (n.matches(SEL) || n.querySelector(SEL))) { if (!q) q = requestAnimationFrame(function () { q = 0; all(); }); return; }
+    }
+  }).observe(document.body, { childList: true, subtree: true });
+})();
+
+/* Hero city switcher: a glass pill slides under the chosen city (styles: royal.css v94) */
+(function () {
+  var bar = document.querySelector('[data-hx-tabs]'); if (!bar) return;
+  var pill = document.createElement('span'); pill.className = 'hx-pill'; pill.setAttribute('aria-hidden', 'true');
+  bar.insertBefore(pill, bar.firstChild);
+  function move() {
+    var b = bar.querySelector('[aria-selected="true"]'); if (!b) return;
+    pill.style.width = b.offsetWidth + 'px'; pill.style.transform = 'translateX(' + b.offsetLeft + 'px)';
+    bar.classList.add('pill-on');
+  }
+  new MutationObserver(move).observe(bar, { attributes: true, subtree: true, attributeFilter: ['aria-selected'] });
+  addEventListener('resize', move); if (document.fonts && document.fonts.ready) document.fonts.ready.then(move);
+  move();
+})();
+
+/* Promise cards (royal.css v101): animate in when the strip is seen; spotlight follows the pointer */
+(function () {
+  var sec = document.querySelector('[data-proof]'); if (!sec) return;
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { sec.classList.add('in'); o.disconnect(); } }, { threshold: .25 }).observe(sec);
+  else sec.classList.add('in');
+  sec.querySelectorAll('.pf').forEach(function (c) {
+    c.addEventListener('pointermove', function (e) { var r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+  });
+})();
+
+/* Phones: sideways rows show a "Swipe" cue + position bar (royal.css v109); the hero city
+   track keeps the chosen city in view and fades the edge that has more cities behind it */
+(function () {
+  var rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function cue(row, o) {
+    if (!row || row._cue) return; row._cue = 1; o = o || {};
+    var c = document.createElement('div'); c.className = 'sw-cue' + (o.dark ? ' dark' : ''); c.setAttribute('aria-hidden', 'true'); c.hidden = true;
+    c.innerHTML = '<span class="sw-ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></svg></span><span class="sw-t">' + (o.text || 'Swipe for more') + '</span><span class="sw-bar"><i></i></span>';
+    (o.after || row).insertAdjacentElement('afterend', c);
+    var q = 0;
+    function upd() {
+      q = 0; var max = row.scrollWidth - row.clientWidth;
+      c.hidden = max < 6 || !row.clientWidth; if (c.hidden) return;
+      var p = Math.min(1, Math.max(0, row.scrollLeft / max));
+      c.style.setProperty('--w', Math.max(.12, row.clientWidth / row.scrollWidth).toFixed(3)); c.style.setProperty('--p', p.toFixed(3));
+      c.classList.toggle('end', p > .97);
+    }
+    function later() { if (!q) q = requestAnimationFrame(upd); }
+    row.addEventListener('scroll', function () { if (row.scrollLeft > 6) c.classList.add('used'); later(); }, { passive: true });
+    addEventListener('resize', later);
+    new MutationObserver(later).observe(row, { childList: true });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { if (es[0].isIntersecting) later(); }).observe(row);
+    if (o.sel) { // start with the chosen item in view
+      var s = row.querySelector(o.sel); if (s && innerWidth <= 760) row.scrollLeft = Math.max(0, s.offsetLeft - 3);
+    }
+    upd();
+  }
+  function init() {
+    cue(document.querySelector('.proof-list'), { text: 'Swipe for all four' });
+    cue(document.querySelector('#universities .chips-row'), { text: 'Swipe for more areas' });
+    cue(document.querySelector('.topic-list'), { text: 'Swipe for more topics', dark: true });
+    document.querySelectorAll('#programmes .pick').forEach(function (p) { cue(p, { dark: true, sel: '[aria-pressed="true"]' }); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  setTimeout(init, 1500); // rows rendered late (pickers, chips) get their cue too
+
+  var bar = document.querySelector('[data-hx-tabs]'); if (!bar) return;
+  function edges() {
+    var max = bar.scrollWidth - bar.clientWidth;
+    bar.classList.toggle('ov', max > 4); bar.classList.toggle('at-start', bar.scrollLeft < 4); bar.classList.toggle('at-end', bar.scrollLeft > max - 4);
+  }
+  function centre() {
+    var b = bar.querySelector('[aria-selected="true"]'); if (!b || bar.scrollWidth - bar.clientWidth < 4) return edges();
+    var left = b.offsetLeft - (bar.clientWidth - b.offsetWidth) / 2;
+    bar.scrollTo({ left: left, behavior: rm ? 'auto' : 'smooth' }); setTimeout(edges, 450);
+  }
+  bar.addEventListener('scroll', edges, { passive: true });
+  new MutationObserver(centre).observe(bar, { attributes: true, subtree: true, attributeFilter: ['aria-selected'] });
+  addEventListener('resize', edges); if (document.fonts && document.fonts.ready) document.fonts.ready.then(edges);
+  edges();
 })();

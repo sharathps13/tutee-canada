@@ -20,8 +20,8 @@
     var surname = parts.length > 1 ? parts[parts.length - 1] : (parts[0] || 'YOUR');
     var given = parts.length > 1 ? parts.slice(0, -1).join('<') : (parts.length ? '' : 'NAME');
     form.querySelector('[data-jc-m1]').textContent = fill('TC<CAN<<' + surname + '<<' + given, 36);
-    var it = intake.value ? intake.value.toUpperCase().replace(/^(\w{3})\w*\s/, '$1') : 'OPEN';
-    var lv = LV[level.value] || 'ANY';
+    var it = intake && intake.value ? intake.value.toUpperCase().replace(/^(\w{3})\w*\s/, '$1') : 'OPEN';
+    var lv = (level && LV[level.value]) || 'ANY';
     form.querySelector('[data-jc-m2]').textContent = fill('FREE<COUNSELLING<<' + lv + '<' + it, 36);
     card.classList.toggle('filled', !!n);
   }
@@ -59,6 +59,8 @@
   function open() {
     if (form.classList.contains('open')) return;
     form.classList.add('open');
+    // the closed card is credit-card sized; it grows to the full form while edge-on mid-flip
+    setTimeout(function () { form.classList.add('grown'); }, reduce ? 0 : 450);
     setTimeout(function () { var n = form.querySelector('#l-name'); if (n) n.focus({ preventScroll: true }); }, reduce ? 0 : 900);
   }
   front.addEventListener('click', open);

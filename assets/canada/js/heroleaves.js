@@ -25,9 +25,9 @@
     };
   }
   function resize() {
-    var r = hero.getBoundingClientRect(); dpr = Math.min(matchMedia('(pointer:coarse)').matches ? 1.5 : 2, devicePixelRatio || 1, Math.sqrt(3e6 / Math.max(1, r.width * r.height)));
+    var r = hero.getBoundingClientRect(); dpr = Math.min(matchMedia('(pointer:coarse)').matches ? 1 : 1.5, devicePixelRatio || 1, Math.sqrt(3e6 / Math.max(1, r.width * r.height)));
     W = r.width; H = r.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var n = W < 700 ? 6 : 11;
+    var n = W < 700 ? 5 : 9;
     if (leaves.length !== n) { leaves = []; for (var i = 0; i < n; i++) leaves.push(make(i, n, true)); }
     leaves.sort(function (a, b) { return a.z - b.z; });
     if (reduce) draw(0);

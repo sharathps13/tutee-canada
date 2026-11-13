@@ -9,8 +9,34 @@
 <link rel="icon" href="./assets/img/logo/icon-96.png">
 <link rel="preload" as="font" type="font/woff2" href="./assets/canada/fonts/playfair-display-latin-400-normal.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="./assets/canada/fonts/manrope-latin-500-normal.woff2" crossorigin>
-<link rel="preload" as="image" href="./assets/img/cities/toronto.webp" imagesrcset="./assets/img/cities/toronto-m.webp 960w, ./assets/img/cities/toronto.webp 1920w" imagesizes="100vw" fetchpriority="high">
+<link rel="preload" as="image" href="./assets/img/cities/toronto.webp" imagesrcset="./assets/img/cities/toronto-m.webp 960w, ./assets/img/cities/toronto-l.webp 1280w, ./assets/img/cities/toronto.webp 1920w" imagesizes="(max-width: 760px) 97vw, (max-width: 999px) 100vw, (max-width: 1100px) 55vw, 700px" fetchpriority="high">
 <link rel="stylesheet" href="./assets/canada/css/royal.css">
+<style>
+/* v119 · working-while-studying figures with visuals */
+.wf2{gap:18px!important;border:0!important}
+.wf2 .wf{position:relative;padding:22px 22px 24px!important;border-radius:22px;background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(200,164,90,.25)!important;overflow:hidden;transition:transform .5s var(--ease),border-color .4s}
+.wf2 .wf:hover{transform:translateY(-6px);border-color:rgba(236,217,168,.6)!important}
+.wf-v{position:relative;height:150px;border:0!important;padding:0!important;min-height:0!important;margin-bottom:14px;display:grid;place-items:center;border-radius:16px;background:radial-gradient(70% 90% at 50% 40%,rgba(227,80,106,.16),transparent 70%)}
+.wf-v svg{margin-top:14px;width:104px;height:104px;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wf-trk{stroke:rgba(255,255,255,.1);stroke-width:8}
+.wf-ring{stroke:url(#none);stroke:#e3506a;stroke-width:8;stroke-dasharray:0 100;transform:rotate(-90deg);transform-origin:60px 60px;transition:stroke-dasharray 1.6s cubic-bezier(.3,.7,.2,1);filter:drop-shadow(0 0 6px rgba(227,80,106,.6))}
+.wf2.in .wf-ring{stroke-dasharray:60 100}
+.wf-hand line,.wf-min{stroke:#ecd9a8;stroke-width:3.5}
+.wf-hand{transform-origin:60px 60px;animation:wfSpin 6s linear infinite}
+.wf-dot{fill:#ecd9a8}
+@keyframes wfSpin{to{transform:rotate(360deg)}}
+.wf-cal{margin-top:14px;display:grid;grid-template-columns:repeat(6,22px);gap:6px}
+.wf-cal i{display:grid;place-items:center;height:22px;border-radius:6px;font:700 9.5px var(--sans);font-style:normal;color:rgba(214,232,241,.45);background:rgba(255,255,255,.06)}
+.wf-cal i.on{color:#fff;background:linear-gradient(135deg,#e3506a,#b3203a);box-shadow:0 0 12px rgba(227,80,106,.5);animation:wfPulse 3s ease-in-out infinite}
+.wf-cal i.on:nth-child(6){animation-delay:.2s}.wf-cal i.on:nth-child(7){animation-delay:.4s}.wf-cal i.on:nth-child(8){animation-delay:.6s}.wf-cal i.on:nth-child(12){animation-delay:.8s}
+@keyframes wfPulse{50%{filter:brightness(1.35)}}
+.wf-inf{position:absolute;right:16px;top:4px;font:400 34px var(--serif);color:#ecd9a8}
+.wf-uni path{stroke:#ecd9a8;stroke-width:3.5}
+.wf-pin{fill:#e3506a;stroke:none;animation:wfBlink 1.6s ease-in-out infinite}
+@keyframes wfBlink{50%{opacity:.2}}
+.wf-tag{position:absolute;left:14px;top:12px;font:700 9.5px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:#ecd9a8}
+@media(prefers-reduced-motion:reduce){.wf-hand,.wf-cal i.on,.wf-pin{animation:none}.wf-ring{transition:none;stroke-dasharray:60 100}}
+</style>
 </head>
 <body>
 
@@ -19,7 +45,7 @@
 
 <header class="hdr" data-hdr>
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="Tutee Connect — back to top"><img src="./assets/img/logo/logo-640.webp" alt="Tutee Connect — Study | Immigration" width="1600" height="652"></a>
+    <a class="logo" href="#top" aria-label="Tutee Connect — back to top"><img src="./assets/img/logo/logo-hd.webp" alt="Tutee Connect — Study | Immigration" width="1000" height="408"></a>
     <nav class="nav" aria-label="Primary">
       <a href="#destinations">Destinations</a><a href="#universities">Universities</a><a href="#programmes">Programmes</a>
       <div class="nav-dd"><a href="#finance" aria-haspopup="true">Finance &amp; Scholarships<i aria-hidden="true"></i></a><div class="nav-menu"><a href="#finance">Working while studying &amp; finance</a><a href="#scholarships">Scholarships &amp; loans</a></div></div>
@@ -33,13 +59,16 @@
 
 <div class="drawer" id="drawer" aria-hidden="true" data-drawer>
   <div class="drawer-top">
-    <span class="logo"><img src="./assets/img/logo/logo-640.webp" alt="Tutee Connect" width="1600" height="652" style="height:34px"></span>
+    <span class="logo"><img src="./assets/img/logo/logo-hd.webp" alt="Tutee Connect" width="1000" height="408" style="height:34px"></span>
     <button class="x" type="button" aria-label="Close menu" data-close-drawer>×</button>
   </div>
-  <nav aria-label="Mobile">
-    <a href="#destinations">Destinations <small>01</small></a><a href="#universities">Universities <small>02</small></a><a href="#programmes">Programmes <small>03</small></a><a href="#admissions">Admissions &amp; intakes <small>04</small></a><a href="#journey">Your journey <small>05</small></a><a href="#finance">Finance <small>06</small></a><a href="#scholarships">Scholarships <small>07</small></a><a href="#permit">Study permit <small>08</small></a><a href="#careers">Careers <small>09</small></a><a href="#life">Life in Canada <small>10</small></a><a href="#faq">Questions <small>11</small></a>
+  <nav class="dn" aria-label="Mobile" data-dn>
+    <a class="dt" href="#destinations" style="--i:0"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span><span class="dt-t"><b>Destinations</b><small>Cities & provinces</small></span><span class="dt-n" aria-hidden="true">01</span></a><a class="dt" href="#universities" style="--i:1"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-5 9 5M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg></span><span class="dt-t"><b>Universities</b><small>Top schools & DLIs</small></span><span class="dt-n" aria-hidden="true">02</span></a><a class="dt" href="#programmes" style="--i:2"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 20.5A2.5 2.5 0 0 0 6.5 23H20M8 8h8M8 12h6"/></svg></span><span class="dt-t"><b>Programmes</b><small>Build your pathway</small></span><span class="dt-n" aria-hidden="true">03</span></a><a class="dt" href="#admissions" style="--i:3"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4M8 14h3"/></svg></span><span class="dt-t"><b>Admissions</b><small>Intakes & docs</small></span><span class="dt-n" aria-hidden="true">04</span></a><a class="dt" href="#journey" style="--i:4"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg></span><span class="dt-t"><b>Your journey</b><small>Step by step</small></span><span class="dt-n" aria-hidden="true">05</span></a><a class="dt" href="#finance" style="--i:5"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2.5"/><path d="M3 10h18M16 15h2"/><path d="M6 6l9-3 2 3"/></svg></span><span class="dt-t"><b>Finance</b><small>Costs & funds</small></span><span class="dt-n" aria-hidden="true">06</span></a><a class="dt" href="#scholarships" style="--i:6"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="M8.5 14l-1.5 7 5-3 5 3-1.5-7"/></svg></span><span class="dt-t"><b>Scholarships</b><small>Awards & funding</small></span><span class="dt-n" aria-hidden="true">07</span></a><a class="dt" href="#permit" style="--i:7"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><circle cx="12" cy="10" r="3"/><path d="M8.5 17h7"/></svg></span><span class="dt-t"><b>Study permit</b><small>How to apply</small></span><span class="dt-n" aria-hidden="true">08</span></a><a class="dt" href="#careers" style="--i:8"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 12.5h18"/></svg></span><span class="dt-t"><b>Careers</b><small>Work rights</small></span><span class="dt-n" aria-hidden="true">09</span></a><a class="dt" href="#life" style="--i:9"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.6 3.5 2.6-1-.6 4.2 3-1.6-.7 2.8 2.6 1.1-3.4 2.6.8 1.8-4.4-.7.3 4.3h-1.6l.3-4.3-4.4.7.8-1.8-3.4-2.6 2.6-1.1-.7-2.8 3 1.6-.6-4.2 2.6 1z"/></svg></span><span class="dt-t"><b>Life in Canada</b><small>Housing & seasons</small></span><span class="dt-n" aria-hidden="true">10</span></a><a class="dt dt-wide" href="#faq" style="--i:10"><span class="dt-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M9.8 8.6a2.3 2.3 0 1 1 3 2.2c-.6.3-.8.6-.8 1.2M12 14h.01"/></svg></span><span class="dt-t"><b>Questions</b><small>Ask Tutee Connect AI</small></span><span class="dt-n" aria-hidden="true">11</span></a>
   </nav>
-  <a class="btn" href="#contact">Free counselling <span class="ar">→</span></a>
+  <div class="dn-foot">
+    <a class="btn" href="#contact">Free counselling <span class="ar">→</span></a>
+    <div class="dn-quick"><a href="tel:+917358364959" aria-label="Call +91 735-836-4959"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h3.5l1.5 5-2.2 1.4a12 12 0 0 0 6.8 6.8L16 14l5 1.5V19a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>Call</a><a href="https://wa.me/917358364959" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8.4 19z"/><path d="M9 9.5c.3 2.2 2.3 4.3 4.6 4.8l1.2-1.2 1.7.8c-.2 1.2-1.2 1.9-2.4 1.8C10.8 15.4 8.4 13 8.2 9.7c0-1.2.7-2.1 1.8-2.3l.8 1.7z"/></svg>WhatsApp</a></div>
+  </div>
 </div>
 
 <main id="main">
@@ -60,27 +89,24 @@
       <p class="hx-sub fade-up t2">World-class universities, vibrant cities and a clear plan for every step — admissions, costs and study permits — with a Tutee Connect counsellor.</p>
       <div class="hx-ctas fade-up t3">
         <a class="btn btn-hero cta2" href="#contact" data-magnetic><span class="cta2-roll" data-t="Start your Canada journey"><span>Start your Canada journey</span></span><span class="cta2-ar" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+        <button type="button" class="qz-open" data-qz-open><span class="qz-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg></span>Find my Canada path<small>30 sec</small></button>
         <a class="tlink" href="#destinations">Explore destinations</a>
       </div>
-      <ul class="hx-trust" aria-label="What we help with">
-        <li><b>01</b><span>Admissions &amp; applications</span></li>
-        <li><b>02</b><span>Costs &amp; proof of funds</span></li>
-        <li><b>03</b><span>Study permit preparation</span></li>
-      </ul>
+      <ul class="hx-trust ht2" aria-label="What we help with"><li style="--i:0"><a href="#admissions"><span class="ht-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V8l8-4 8 4v11M8 19v-6h8v6M3 19h18"/></svg></span><span class="ht-t"><small>01</small><b>Admissions &amp; applications</b><em>Shortlist to offer letter</em></span><span class="ht-ar" aria-hidden="true">→</span></a></li><li style="--i:1"><a href="#finance"><span class="ht-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M16 15h2"/></svg></span><span class="ht-t"><small>02</small><b>Costs &amp; proof of funds</b><em>Budget planned with you</em></span><span class="ht-ar" aria-hidden="true">→</span></a></li><li style="--i:2"><a href="#permit"><span class="ht-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5"/><circle cx="12" cy="10" r="2.6"/><path d="M8.5 16.5h7"/></svg></span><span class="ht-t"><small>03</small><b>Study permit preparation</b><em>File ready, step by step</em></span><span class="ht-ar" aria-hidden="true">→</span></a></li></ul>
     </div>
     <div class="hx-stage fade-up t2">
       <div class="hx-tilt" data-hx-tilt>
       <figure class="hx-card" data-hx-card aria-live="polite">
         <i class="hx-blur" data-hx-blur style="background-image:url(./assets/img/cities/toronto-blur.webp)" aria-hidden="true"></i>
         <div class="hx-prog" aria-hidden="true" data-hx-prog><i class="on"></i><i></i><i></i><i></i><i></i></div>
-        <img class="on" data-c="toronto" src="./assets/img/cities/toronto.webp" srcset="./assets/img/cities/toronto-m.webp 960w, ./assets/img/cities/toronto.webp 1920w" sizes="100vw" alt="Toronto waterfront and the CN Tower" width="2400" height="1501" fetchpriority="high" data-h-img>
-        <img data-c="vancouver" src="./assets/img/cities/vancouver.webp" srcset="./assets/img/cities/vancouver-m.webp 960w, ./assets/img/cities/vancouver.webp 1920w" sizes="100vw" alt="Vancouver skyline, harbour and North Shore mountains" width="2400" height="1718" loading="lazy">
-        <img data-c="montreal" src="./assets/img/cities/montreal.webp" srcset="./assets/img/cities/montreal-m.webp 960w, ./assets/img/cities/montreal.webp 1920w" sizes="100vw" alt="Montréal skyline above the Old Port" width="2400" height="1572" loading="lazy">
-        <img data-c="calgary" src="./assets/img/cities/calgary.webp" srcset="./assets/img/cities/calgary-m.webp 960w, ./assets/img/cities/calgary.webp 1920w" sizes="100vw" alt="Calgary downtown skyline" width="2400" height="1351" loading="lazy">
-        <img data-c="ottawa" src="./assets/img/cities/ottawa.webp" srcset="./assets/img/cities/ottawa-m.webp 960w, ./assets/img/cities/ottawa.webp 1920w" sizes="100vw" alt="Parliament of Canada above the Ottawa River" width="2400" height="1351" loading="lazy">
+        <img class="on" data-c="toronto" src="./assets/img/cities/toronto.webp" srcset="./assets/img/cities/toronto-m.webp 960w, ./assets/img/cities/toronto-l.webp 1280w, ./assets/img/cities/toronto.webp 1920w" sizes="(max-width: 760px) 97vw, (max-width: 999px) 100vw, (max-width: 1100px) 55vw, 700px" alt="Toronto waterfront and the CN Tower" width="2400" height="1501" fetchpriority="high" data-h-img>
+        <img data-c="vancouver" src="./assets/img/cities/vancouver.webp" srcset="./assets/img/cities/vancouver-m.webp 960w, ./assets/img/cities/vancouver-l.webp 1280w, ./assets/img/cities/vancouver.webp 1920w" sizes="(max-width: 760px) 97vw, (max-width: 999px) 100vw, (max-width: 1100px) 55vw, 700px" alt="Vancouver skyline, harbour and North Shore mountains" width="2400" height="1718" loading="lazy" fetchpriority="low" decoding="async">
+        <img data-c="montreal" src="./assets/img/cities/montreal.webp" srcset="./assets/img/cities/montreal-m.webp 960w, ./assets/img/cities/montreal-l.webp 1280w, ./assets/img/cities/montreal.webp 1920w" sizes="(max-width: 760px) 97vw, (max-width: 999px) 100vw, (max-width: 1100px) 55vw, 700px" alt="Montréal skyline above the Old Port" width="2400" height="1572" loading="lazy" fetchpriority="low" decoding="async">
+        <img data-c="calgary" src="./assets/img/cities/calgary.webp" srcset="./assets/img/cities/calgary-m.webp 960w, ./assets/img/cities/calgary-l.webp 1280w, ./assets/img/cities/calgary.webp 1920w" sizes="(max-width: 760px) 97vw, (max-width: 999px) 100vw, (max-width: 1100px) 55vw, 700px" alt="Calgary downtown skyline" width="2400" height="1351" loading="lazy" fetchpriority="low" decoding="async">
+        <img data-c="ottawa" src="./assets/img/cities/ottawa.webp" srcset="./assets/img/cities/ottawa-m.webp 960w, ./assets/img/cities/ottawa-l.webp 1280w, ./assets/img/cities/ottawa.webp 1920w" sizes="(max-width: 760px) 97vw, (max-width: 999px) 100vw, (max-width: 1100px) 55vw, 700px" alt="Parliament of Canada above the Ottawa River" width="2400" height="1351" loading="lazy" fetchpriority="low" decoding="async">
         <span class="hx-num"><b data-hx-n>01</b> / 05</span>
         <figcaption class="hx-cap"><span data-hx-prov>Ontario</span><b data-hx-name>Toronto</b><small data-hx-line>A global city on Lake Ontario.</small><span class="hx-unis" data-hx-unis><em>University of Toronto</em><em>Toronto Metropolitan University</em></span></figcaption>
-        <button type="button" class="hx-go" data-hx-go aria-label="Explore Toronto in the destinations atlas">→</button>
+        <button type="button" class="hx-go" data-hx-go aria-label="Explore Toronto in the destinations atlas"><svg class="go-ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <small class="hx-cred" data-hx-cred></small>
         <span class="hx-glare" aria-hidden="true"></span>
       </figure>
@@ -99,18 +125,19 @@
 <canvas class="leaf-layer" data-leaf-layer aria-hidden="true"></canvas>
 
 <!-- MANIFESTO =========================================================== -->
-<section class="proof" aria-label="Why students work with Tutee Connect">
+<section class="proof" aria-label="Why students work with Tutee Connect" data-proof>
   <ul class="wrap proof-list">
-    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Free first consultation</b>No fee, no obligation</span></li>
-    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v5c0 4.5 3.4 8.4 8 9 4.6-.6 8-4.5 8-9V7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Rules checked on canada.ca</b>Permit and work rules, October 2026</span></li>
-    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-1.5a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4V20M10 10.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M20 20v-1.5a4 4 0 0 0-3-3.9M15 3.6a3.5 3.5 0 0 1 0 6.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>One counsellor, start to arrival</b>From profile review to pre-departure</span></li>
-    <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Offices in Chennai and Dubai</b>Meet us in person or online</span></li>
+    <span class="pf-line" aria-hidden="true"><i></i></span>
+    <li><a class="pf" href="#contact" style="--i:0"><span class="pf-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><i aria-hidden="true"></i></span><span class="pf-t"><small class="pf-n">01</small><b>Free first consultation</b><span class="pf-s">No fee, no obligation</span><span class="pf-more">Profile, budget and options reviewed together</span></span><span class="pf-go" aria-hidden="true">Book a call <em>→</em></span></a></li>
+    <li><a class="pf" href="#permit" style="--i:1"><span class="pf-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v5c0 4.5 3.4 8.4 8 9 4.6-.6 8-4.5 8-9V7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><i aria-hidden="true"></i></span><span class="pf-t"><small class="pf-n">02</small><b>Rules checked on canada.ca</b><span class="pf-s">Permit and work rules, October 2026</span><span class="pf-more">Permit and PGWP points link to IRCC</span></span><span class="pf-go" aria-hidden="true">See the rules <em>→</em></span></a></li>
+    <li><a class="pf" href="#journey" style="--i:2"><span class="pf-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-1.5a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4V20M10 10.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M20 20v-1.5a4 4 0 0 0-3-3.9M15 3.6a3.5 3.5 0 0 1 0 6.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><i aria-hidden="true"></i></span><span class="pf-t"><small class="pf-n">03</small><b>One counsellor, start to arrival</b><span class="pf-s">From profile review to pre-departure</span><span class="pf-more">Eight steps, one person to ask</span></span><span class="pf-go" aria-hidden="true">See the journey <em>→</em></span></a></li>
+    <li><a class="pf" href="#contact" style="--i:3"><span class="pf-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><i aria-hidden="true"></i></span><span class="pf-t"><small class="pf-n">04</small><b>Offices in Chennai and Dubai</b><span class="pf-s">Meet us in person or online</span><span class="pf-more">Chennai · Dubai · or a video call</span></span><span class="pf-go" aria-hidden="true">Find us <em>→</em></span></a></li>
   </ul>
 </section>
 <section class="mf2" id="manifesto" aria-label="Why Canada" data-mf2>
   <div class="mf2-sticky">
     <figure class="mf2-media" data-mf2-media aria-hidden="true">
-      <div class="mf2-img" data-mf2-img><img src="./assets/img/photos/trinity-college.webp" alt="Trinity College quadrangle, University of Toronto" width="2560" height="1918" loading="lazy" decoding="async"></div>
+      <div class="mf2-img" data-mf2-img><img src="./assets/img/photos/trinity-college.webp" srcset="./assets/img/photos/trinity-college-m.webp 1200w, ./assets/img/photos/trinity-college.webp 1920w" sizes="100vw" alt="Trinity College quadrangle, University of Toronto" width="2560" height="1918" loading="lazy" decoding="async"></div>
       <div class="mf2-shade"></div>
       <figcaption>Trinity College, University of Toronto</figcaption>
     </figure>
@@ -138,7 +165,7 @@
       <span class="mf2-k">02 · Working while studying</span>
       <b><span data-count="24">24</span><sup>hrs / week</sup></b>
       <p>of off-campus work during regular terms for eligible students; no weekly limit during scheduled breaks.</p>
-      <div class="mf2-more"><p>Depends on your study permit conditions. Part-time income can’t be used as proof of funds.</p><span class="src">canada.ca — Work off campus, checked Oct 2026</span></div>
+      <div class="mf2-more"><p>Earn while you study — your part-time income can support your day-to-day living costs.</p><span class="src">canada.ca — Work off campus, checked Oct 2026</span></div>
       <i class="mf2-bar"></i>
     </article>
     <article class="mf2-stat rv" data-stat="2" tabindex="0">
@@ -153,6 +180,32 @@
 
 <!-- DESTINATIONS ======================================================== -->
 <div class="mq" aria-hidden="true"><div class="mq-track"><div class="mq-row"><span>Toronto</span><i></i><span>Vancouver</span><i></i><span>Montréal</span><i></i><span>Calgary</span><i></i><span>Ottawa</span><i></i><span>Halifax</span><i></i><span>Edmonton</span><i></i><span>Winnipeg</span><i></i></div><div class="mq-row"><span>Toronto</span><i></i><span>Vancouver</span><i></i><span>Montréal</span><i></i><span>Calgary</span><i></i><span>Ottawa</span><i></i><span>Halifax</span><i></i><span>Edmonton</span><i></i><span>Winnipeg</span><i></i></div></div></div>
+<section class="nw" id="news" aria-labelledby="nw-title" data-news>
+  <div class="nw-sky" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap">
+    <div class="nw-head">
+      <div>
+        <p class="nw-kick"><span class="nw-live"><i></i>Live</span> Canada today</p>
+        <h2 class="nw-title" id="nw-title">What&rsquo;s happening in <em>Canada</em>, right now.</h2>
+      </div>
+      <div class="nw-meta">
+        <div class="nw-clock"><small>Ottawa</small><b data-nw-clock>--:--</b><small>ET</small></div>
+        <p class="nw-upd" data-nw-upd>Connecting to the wire&hellip;</p>
+        <div class="nw-filter" role="group" aria-label="Filter headlines" data-nw-filter>
+          <button type="button" aria-pressed="true" data-k="ircc">Immigration &amp; study</button><button type="button" aria-pressed="false" data-k="canada">Canada</button><button type="button" aria-pressed="false" data-k="">All</button>
+        </div>
+      </div>
+    </div>
+    <div class="nw-grid">
+      <article class="nw-lead" data-nw-lead aria-live="polite">
+        <div class="nw-skel"><i></i><i></i><i></i></div>
+      </article>
+      <ol class="nw-wire" data-nw-wire aria-label="Latest headlines"></ol>
+    </div>
+  </div>
+  <div class="lt lt-run" aria-hidden="true"><div class="nw-crawl-in"><div class="nw-crawl-track" data-nw-crawl></div></div></div>
+  <p class="wrap nw-src">Headlines update through the day from the <a href="https://www.canada.ca/en/news.html" target="_blank" rel="noopener">Government of Canada news centre</a> (including <a href="https://www.canada.ca/en/immigration-refugees-citizenship/news.html" target="_blank" rel="noopener">IRCC</a>) and <a href="https://www.cbc.ca/news/canada" target="_blank" rel="noopener">CBC News &middot; Canada</a>. Stories open on the publisher&rsquo;s site; Tutee Connect does not write or edit them.</p>
+</section>
 <section class="sec dark dests" id="destinations">
   <div class="wrap">
     <div class="head two">
@@ -172,6 +225,8 @@
       </div>
       <article class="dossier rv d1" data-dossier aria-live="polite"></article>
     </div>
+    <div class="cpc-h rv"><b>City postcards</b><small>Tap a city to open its dossier</small></div>
+    <div class="cpc rv" data-cpc><button type="button" class="cpc-toronto" data-c="toronto" aria-label="Open the Toronto dossier"><i aria-hidden="true"></i><span class="cp-n" aria-hidden="true">01</span><span class="cp-t"><small>Ontario</small><b>Toronto</b><span>Open dossier →</span></span></button><button type="button" class="cpc-vancouver" data-c="vancouver" aria-label="Open the Vancouver dossier"><i aria-hidden="true"></i><span class="cp-n" aria-hidden="true">02</span><span class="cp-t"><small>British Columbia</small><b>Vancouver</b><span>Open dossier →</span></span></button><button type="button" class="cpc-montreal" data-c="montreal" aria-label="Open the Montréal dossier"><i aria-hidden="true"></i><span class="cp-n" aria-hidden="true">03</span><span class="cp-t"><small>Québec</small><b>Montréal</b><span>Open dossier →</span></span></button><button type="button" class="cpc-calgary" data-c="calgary" aria-label="Open the Calgary dossier"><i aria-hidden="true"></i><span class="cp-n" aria-hidden="true">04</span><span class="cp-t"><small>Alberta</small><b>Calgary</b><span>Open dossier →</span></span></button><button type="button" class="cpc-ottawa" data-c="ottawa" aria-label="Open the Ottawa dossier"><i aria-hidden="true"></i><span class="cp-n" aria-hidden="true">05</span><span class="cp-t"><small>Ontario</small><b>Ottawa</b><span>Open dossier →</span></span></button></div>
     <p class="src" style="margin-top:26px">Institution counts: IRCC <a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/study-permit/prepare/designated-learning-institutions-list.html" target="_blank" rel="noopener">Designated learning institutions list</a> (24 Aug 2026). Map: Natural Earth; lakes © OpenStreetMap contributors (ODbL).</p>
   </div>
 </section>
@@ -219,7 +274,8 @@
       <p class="lede rv d1">Choose a level, a field and a region. You'll see what that route usually looks like in Canada, which universities are known for the field, how many institutions match, and the PGWP points to check.</p>
     </div>
     <div class="builder">
-      <div class="rv" data-builder>
+      <div class="rv b-route" data-builder>
+        <span class="b-line" aria-hidden="true"><i></i></span>
         <div class="b-step"><h4><i>i.</i> Qualification level</h4><div class="pick" role="group" aria-label="Qualification level" data-b="level"></div></div>
         <div class="b-step"><h4><i>ii.</i> Study area</h4><div class="pick" role="group" aria-label="Study area" data-b="area"></div></div>
         <div class="b-step"><h4><i>iii.</i> Region</h4><div class="pick" role="group" aria-label="Region" data-b="region"></div></div>
@@ -230,6 +286,25 @@
 </section>
 
 <!-- JOURNEY ============================================================= -->
+<section class="cb" aria-labelledby="cb-t">
+  <div class="wrap cb-in">
+    <div>
+      <small class="cb-k">Prefer to talk it through?</small>
+      <h2 id="cb-t">Request a <em>callback.</em></h2>
+      <p class="cb-l">Leave your number and a Tutee Connect counsellor will call you about your Canada plan — free, and without obligation.</p>
+    </div>
+    <form class="cb-form" data-cb novalidate>
+      <label class="cb-w">Full name<input name="name" autocomplete="name" placeholder="As on your passport" required></label>
+      <label>Mobile number<span class="cb-ph"><select name="country_code" aria-label="Country code"><option value="+91">IN (+91)</option></select><input name="phone_number" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="Mobile number" required></span></label>
+      <label>Email<input name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+      <label class="cb-hp" aria-hidden="true">Leave empty<input name="botcheck" tabindex="-1" autocomplete="off"></label>
+      <button class="btn" type="submit">Call me back <span class="ar">→</span></button>
+      <p class="cb-msg" data-cb-msg role="status"></p>
+      <p class="cb-fine">We use your details only to respond to this request. See our <a href="https://tuteeconnect.com/privacy-policy.html" target="_blank" rel="noopener" style="color:inherit">privacy policy</a>.</p>
+    </form>
+  </div>
+</section>
+
 <section class="sec ivory adm" id="admissions">
   <div class="wrap">
     <div class="head two">
@@ -242,6 +317,7 @@
           <button role="tab" aria-selected="true" data-lv="dip">Diploma / certificate</button><button role="tab" aria-selected="false" data-lv="ba">Bachelor's</button><button role="tab" aria-selected="false" data-lv="pg">Postgraduate certificate</button><button role="tab" aria-selected="false" data-lv="ma">Master's</button><button role="tab" aria-selected="false" data-lv="phd">Doctorate</button>
         </div>
         <div class="adm-panel" role="tabpanel" data-adm-panel aria-live="polite"></div>
+        <div class="adm-ask"><p>Not sure which level fits? A counsellor checks your grades and test scores against each programme&rsquo;s published requirements.</p><a class="btn sm" href="#contact">Check my eligibility <span class="ar">&rarr;</span></a></div>
         <p class="adm-flag"><b>General guidance.</b> Minimum grades, test scores and documents are set by each institution and programme, and change by intake. Your counsellor confirms them on the official programme page before you apply.</p>
       </div>
       <div class="adm-plan rv d1">
@@ -250,12 +326,12 @@
           <div class="adm-seg" role="radiogroup" aria-label="Intake" data-adm-intake>
             <button role="radio" aria-checked="true" data-m="8">September</button><button role="radio" aria-checked="false" data-m="0">January</button><button role="radio" aria-checked="false" data-m="4">May</button>
           </div>
-          <label class="adm-year">Year <select data-adm-year><option>2027</option><option selected>2028</option></select></label>
+          <label class="adm-year">Year <select data-adm-year><option selected>2027</option><option>2028</option></select></label>
         </div>
         <p class="adm-note" data-adm-note></p>
         <ol class="adm-tl" data-adm-tl></ol>
-        <p class="adm-src">September is Canada's main intake; January is common and May is offered by some programmes. Months are suggested lead times, not official deadlines. Study permit processing times vary by country &mdash; check the <a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-processing-times.html" target="_blank" rel="noopener">IRCC processing-times tool</a>.</p>
-        <a class="btn" href="#contact">Plan my intake with a counsellor <span class="ar">&rarr;</span></a>
+        <div class="adm-get"><p>Your free intake plan includes</p><ul><li>Personal month-by-month timeline</li><li>Shortlist matched to your profile</li><li>Document checklist for your programme</li><li>Deadline reminders from your counsellor</li></ul></div><p class="adm-src">Every student's plan is different &mdash; your counsellor builds a personal timeline around your profile and programme.</p>
+        <a class="btn" href="#contact" data-adm-cta>Get my personal intake plan <span class="ar">&rarr;</span></a>
       </div>
     </div>
   </div>
@@ -284,18 +360,19 @@
 
 <!-- FINANCE ============================================================= -->
 <section class="sec dark fin" id="finance">
+  <div class="fin-ph" aria-hidden="true"></div>
   <div class="wrap">
     <div class="head two">
       <div><p class="kicker rv"><span class="no">06</span> Working while studying</p><h2 class="display d-l" style="margin-top:18px"><span class="ln"><span>Study first.</span></span><span class="ln"><span>Earn <em class="em-c">within</em> the rules.</span></span></h2></div>
-      <p class="lede rv d1">What the rules allow while you study in Canada — how many hours, when, and what part-time income can and can't do for your budget.</p>
+      <p class="lede rv d1">What the rules allow while you study in Canada — how many hours, when, and how part-time income can support your budget.</p>
     </div>
     <div id="fp-work" class="pane">
-      <div class="work-figs">
-        <div><b>24 h</b><p>Maximum off-campus work per week during regular academic sessions, if your study permit allows work.</p></div>
-        <div><b>No cap</b><p>During scheduled breaks such as winter and summer holidays and reading week, if you're eligible.</p></div>
-        <div><b>On campus</b><p>On-campus work follows separate rules. Always check the conditions printed on your own permit.</p></div>
+      <div class="work-figs wf2">
+        <div class="wf"><div class="wf-v" aria-hidden="true"><svg viewBox="0 0 120 120"><circle class="wf-trk" cx="60" cy="60" r="48"/><circle class="wf-ring" cx="60" cy="60" r="48" pathLength="100"/><g class="wf-hand"><line x1="60" y1="60" x2="60" y2="26"/></g><line class="wf-min" x1="60" y1="60" x2="80" y2="60"/><circle cx="60" cy="60" r="4" class="wf-dot"/></svg><span class="wf-tag">per week · term</span></div><b>24 h</b><p>Maximum off-campus work per week during regular academic sessions, if your study permit allows work.</p></div>
+        <div class="wf"><div class="wf-v" aria-hidden="true"><div class="wf-cal"><i>J</i><i>F</i><i>M</i><i>A</i><i class="on">M</i><i class="on">J</i><i class="on">J</i><i class="on">A</i><i>S</i><i>O</i><i>N</i><i class="on">D</i></div><span class="wf-inf">∞</span><span class="wf-tag">full-time in breaks</span></div><b>No cap</b><p>During scheduled breaks such as winter and summer holidays and reading week, if you're eligible.</p></div>
+        <div class="wf"><div class="wf-v" aria-hidden="true"><svg viewBox="0 0 120 120" class="wf-uni"><path d="M14 46 60 22l46 24"/><path d="M22 52v40M38 52v40M54 52v40M66 52v40M82 52v40M98 52v40M12 96h96"/><circle class="wf-pin" cx="60" cy="36" r="3.5"/></svg><span class="wf-tag">jobs on campus</span></div><b>On campus</b><p>On-campus work follows separate rules. Always check the conditions printed on your own permit.</p></div>
       </div>
-      <div class="note">Part-time income shouldn't be counted on to cover tuition or to meet proof-of-funds requirements. Source: <a href="https://www.canada.ca/en/immigration-refugees-citizenship/services/study-canada/work/work-off-campus.html" target="_blank" rel="noopener" style="color:inherit">canada.ca — Work off campus</a>, checked October 2026.</div>
+      <div class="note note-go"><b>Earn while you study.</b> Eligible students can work up to 24 hours a week during term and full-time in scheduled breaks. Many use their earnings for day-to-day living costs &mdash; so their savings stretch further for the years ahead. <a href="#contact" style="color:inherit">A counsellor can help you plan your budget across the whole programme &rarr;</a></div>
     </div>
   <div class="partners rv">
       <p>Education-loan<br>partners</p>
@@ -340,6 +417,7 @@
 
 <!-- LIFE ================================================================ -->
 <section class="sec dark career" id="careers">
+  <div class="car-ph" aria-hidden="true"></div>
   <div class="wrap">
     <div class="head two">
       <div><p class="kicker rv" style="color:var(--ice-2)"><span class="no">09</span> Careers after graduation</p><h2 class="display d-l" style="margin-top:18px"><span class="ln"><span>From student</span></span><span class="ln"><span>to <em class="em-c">professional.</em></span></span></h2></div>
@@ -415,7 +493,7 @@
       <div class="ask-aura" aria-hidden="true"></div>
       <div class="ask-hd">
         <span class="ask-orb" aria-hidden="true"><i></i><i></i><i></i><img src="./assets/img/tc-mark.webp" alt="" width="44" height="44"></span>
-        <div><b>Tutee Connect</b><small><span class="ask-live"></span>Answers checked on canada.ca · Oct 2026</small></div>
+        <div><b>Ask Tutee</b><small><span class="ask-live"></span>Answers checked on canada.ca · Oct 2026</small></div>
         <button type="button" class="ask-reset" data-ask-reset aria-label="Start a new chat">New chat</button>
       </div>
       <div class="ask-log" data-ask-log role="log" aria-live="polite" aria-label="Chat with Tutee Connect"></div>
@@ -423,7 +501,8 @@
       <form class="ask-in" data-ask-form autocomplete="off">
         <label class="sr-only" for="askq">Type your question</label>
         <input id="askq" name="q" maxlength="400" placeholder="Ask anything — fees, intakes, work rights, PGWP…" data-ask-input>
-        <button type="submit" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <button type="button" class="ask-mic" data-ask-mic aria-label="Ask by voice" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button><button type="submit" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+        <canvas class="ask-wave" data-ask-wave aria-hidden="true"></canvas>
       </form>
       <p class="ask-note">General guidance only — not immigration advice. Nothing here guarantees admission or a permit.</p>
     </div>
@@ -498,9 +577,9 @@
       <h2 class="display" style="margin-top:22px"><span class="ln"><span>Let's plan your</span></span><span class="ln"><span><em>next chapter.</em></span></span></h2>
       <p class="lede rv d1" style="margin-top:26px">Everything you've explored on this page — cities, universities, pathway and budget — is a starting point. A Tutee Connect counsellor will turn it into a plan for you, free and without obligation.</p>
       <div class="contact-lines rv d2">
-        <div><b>Call</b><a href="tel:+917010902329">+91 701-090-2329</a> · <a href="tel:+971553799068">+971 55-379-9068</a></div>
+        <div><b>Call</b><a href="tel:+917358364959">+91 735-836-4959</a> · <a href="tel:+971553799068">+971 55-379-9068</a></div>
         <div><b>Email</b><a href="mailto:info@tuteeconnect.com">info@tuteeconnect.com</a></div>
-        <div><b>WhatsApp</b><a href="https://wa.me/917010902329" target="_blank" rel="noopener">Chat with a counsellor</a></div>
+        <div><b>WhatsApp</b><a href="https://wa.me/917358364959" target="_blank" rel="noopener">Chat with a counsellor</a></div>
       </div>
     </div>
     <form class="form jc-form rv d1" data-lead-form data-jc novalidate>
@@ -508,14 +587,14 @@
       <button type="button" class="jc-front" data-jc-open aria-label="Open the free counselling card">
         <span class="jc-fholo" aria-hidden="true"></span>
         <span class="jc-ftop"><img src="./assets/img/tc-mark.webp" alt="" loading="lazy" decoding="async" width="54" height="54"><span class="jc-chip" aria-hidden="true"><i></i><i></i><i></i><i></i></span></span>
-        <span class="jc-fmid"><small>Tutee Connect · Canada</small><b>Free counselling card</b><em>Carte de conseil gratuite</em></span>
+        <span class="jc-fmid"><small>Tutee Connect · Canada</small><b>Free counselling card</b></span>
         <span class="jc-fbot"><span><small>Holder</small>YOUR NAME</span><span><small>Fee</small>Free</span></span>
         <span class="jc-tap">Tap to open <i>↻</i></span>
       </button>
       <div class="jc-card" data-jc-card>
         <div class="jc-holo" aria-hidden="true"></div>
         <div class="jc-band">
-          <span class="jc-brand"><img src="./assets/img/tc-mark.webp" alt="" loading="lazy" decoding="async" width="34" height="34"><span><b>Tutee Connect</b><small>Canada journey card · Carte de parcours</small></span></span>
+          <span class="jc-brand"><img src="./assets/img/tc-mark.webp" alt="" loading="lazy" decoding="async" width="34" height="34"><span><b>Tutee Connect</b><small>Canada journey card</small></span></span>
           <span class="jc-chip" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
         </div>
         <h3 class="jc-title">Get personalised Canada guidance</h3>
@@ -526,11 +605,13 @@
             <small>No. <span data-jc-no>TC-0000</span></small>
           </div>
           <div class="jc-fields">
-            <div class="jc-f wide"><label for="l-name">Full name · Nom</label><input class="field" id="l-name" name="name" autocomplete="name" required minlength="2" placeholder="As on your passport"></div>
-            <div class="jc-f wide"><label for="l-email">Email · Courriel</label><input class="field" id="l-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
-            <div class="jc-f wide"><label for="l-phone">Phone · Téléphone</label><div class="ph"><select class="field" name="country_code" aria-label="Country code"><option value="+971">AE (+971)</option><option value="+93">AF (+93)</option><option value="+54">AR (+54)</option><option value="+43">AT (+43)</option><option value="+61">AU (+61)</option><option value="+32">BE (+32)</option><option value="+55">BR (+55)</option><option value="+41">CH (+41)</option><option value="+56">CL (+56)</option><option value="+86">CN (+86)</option><option value="+57">CO (+57)</option><option value="+49">DE (+49)</option><option value="+45">DK (+45)</option><option value="+213">DZ (+213)</option><option value="+20">EG (+20)</option><option value="+34">ES (+34)</option><option value="+358">FI (+358)</option><option value="+33">FR (+33)</option><option value="+30">GR (+30)</option><option value="+36">HU (+36)</option><option value="+62">ID (+62)</option><option value="+353">IE (+353)</option><option value="+91" selected>IN (+91)</option><option value="+98">IR (+98)</option><option value="+39">IT (+39)</option><option value="+81">JP (+81)</option><option value="+254">KE (+254)</option><option value="+82">KR (+82)</option><option value="+94">LK (+94)</option><option value="+212">MA (+212)</option><option value="+95">MM (+95)</option><option value="+52">MX (+52)</option><option value="+60">MY (+60)</option><option value="+234">NG (+234)</option><option value="+31">NL (+31)</option><option value="+47">NO (+47)</option><option value="+64">NZ (+64)</option><option value="+51">PE (+51)</option><option value="+63">PH (+63)</option><option value="+92">PK (+92)</option><option value="+48">PL (+48)</option><option value="+351">PT (+351)</option><option value="+974">QA (+974)</option><option value="+40">RO (+40)</option><option value="+7">RU/KZ (+7)</option><option value="+966">SA (+966)</option><option value="+46">SE (+46)</option><option value="+65">SG (+65)</option><option value="+66">TH (+66)</option><option value="+216">TN (+216)</option><option value="+90">TR (+90)</option><option value="+255">TZ (+255)</option><option value="+380">UA (+380)</option><option value="+256">UG (+256)</option><option value="+44">UK (+44)</option><option value="+1">US/CA (+1)</option><option value="+58">VE (+58)</option><option value="+84">VN (+84)</option><option value="+27">ZA (+27)</option></select><input class="field" id="l-phone" name="phone_number" type="tel" inputmode="tel" autocomplete="tel-national" required placeholder="Mobile number"></div></div>
-            <div class="jc-f"><label for="l-level">Level · Niveau</label><select class="field" id="l-level" data-x="Level"><option value="">Not sure yet</option><option>Diploma / certificate</option><option>Bachelor's</option><option>Postgraduate certificate</option><option>Master's</option><option>Doctorate</option></select></div>
-            <div class="jc-f"><label for="l-intake">Intake · Session</label><select class="field" id="l-intake" data-x="Intake"><option value="">Not sure yet</option><option>January 2027</option><option>May 2027</option><option>September 2027</option><option>January 2028</option><option>September 2028</option></select></div>
+            <div class="jc-f wide"><label for="l-name">Full name</label><input class="field" id="l-name" name="name" autocomplete="name" required minlength="2" placeholder="As on your passport"></div>
+            <div class="jc-f wide"><label for="l-email">Email</label><input class="field" id="l-email" name="email" type="email" autocomplete="email" required placeholder="you@example.com"></div>
+            <div class="jc-f wide"><label for="l-phone">Phone</label><div class="ph"><select class="field" name="country_code" aria-label="Country code"><option value="+971">AE (+971)</option><option value="+93">AF (+93)</option><option value="+54">AR (+54)</option><option value="+43">AT (+43)</option><option value="+61">AU (+61)</option><option value="+32">BE (+32)</option><option value="+55">BR (+55)</option><option value="+41">CH (+41)</option><option value="+56">CL (+56)</option><option value="+86">CN (+86)</option><option value="+57">CO (+57)</option><option value="+49">DE (+49)</option><option value="+45">DK (+45)</option><option value="+213">DZ (+213)</option><option value="+20">EG (+20)</option><option value="+34">ES (+34)</option><option value="+358">FI (+358)</option><option value="+33">FR (+33)</option><option value="+30">GR (+30)</option><option value="+36">HU (+36)</option><option value="+62">ID (+62)</option><option value="+353">IE (+353)</option><option value="+91" selected>IN (+91)</option><option value="+98">IR (+98)</option><option value="+39">IT (+39)</option><option value="+81">JP (+81)</option><option value="+254">KE (+254)</option><option value="+82">KR (+82)</option><option value="+94">LK (+94)</option><option value="+212">MA (+212)</option><option value="+95">MM (+95)</option><option value="+52">MX (+52)</option><option value="+60">MY (+60)</option><option value="+234">NG (+234)</option><option value="+31">NL (+31)</option><option value="+47">NO (+47)</option><option value="+64">NZ (+64)</option><option value="+51">PE (+51)</option><option value="+63">PH (+63)</option><option value="+92">PK (+92)</option><option value="+48">PL (+48)</option><option value="+351">PT (+351)</option><option value="+974">QA (+974)</option><option value="+40">RO (+40)</option><option value="+7">RU/KZ (+7)</option><option value="+966">SA (+966)</option><option value="+46">SE (+46)</option><option value="+65">SG (+65)</option><option value="+66">TH (+66)</option><option value="+216">TN (+216)</option><option value="+90">TR (+90)</option><option value="+255">TZ (+255)</option><option value="+380">UA (+380)</option><option value="+256">UG (+256)</option><option value="+44">UK (+44)</option><option value="+1">US/CA (+1)</option><option value="+58">VE (+58)</option><option value="+84">VN (+84)</option><option value="+27">ZA (+27)</option></select><input class="field" id="l-phone" name="phone_number" type="tel" inputmode="tel" autocomplete="tel-national" required placeholder="Mobile number"></div></div>
+            <div class="jc-f"><label for="l-state">State</label><select class="field" id="l-state" data-x="State" autocomplete="address-level1"><option value="">Your state</option><optgroup label="India"><option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option><option>Bihar</option><option>Chhattisgarh</option><option>Goa</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option><option>Odisha</option><option>Punjab</option><option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option><option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option><option>Andaman & Nicobar Islands</option><option>Chandigarh</option><option>Dadra & Nagar Haveli and Daman & Diu</option><option>Delhi</option><option>Jammu & Kashmir</option><option>Ladakh</option><option>Lakshadweep</option><option>Puducherry</option></optgroup><optgroup label="UAE"><option value="Abu Dhabi, UAE">Abu Dhabi</option><option value="Dubai, UAE">Dubai</option><option value="Sharjah, UAE">Sharjah</option><option value="Ajman, UAE">Ajman</option><option value="Umm Al Quwain, UAE">Umm Al Quwain</option><option value="Ras Al Khaimah, UAE">Ras Al Khaimah</option><option value="Fujairah, UAE">Fujairah</option></optgroup><option>Other / outside India & UAE</option></select></div>
+            <div class="jc-f"><label for="l-course">Course</label><select class="field" id="l-course" data-x="Course"><option value="">Pick a course</option><option>Computer Science & IT</option><option>Data Science & AI</option><option>Engineering</option><option>Business & Management</option><option>Finance & Accounting</option><option>Health, Nursing & Life Sciences</option><option>Sciences</option><option>Hospitality & Tourism</option><option>Arts, Design & Media</option><option>Law & Public Policy</option><option>Environment & Resources</option><option>Not sure yet</option></select></div>
+            <div class="jc-f"><label for="l-time">Call time</label><select class="field" id="l-time" data-x="Call time"><option value="">Pick a time</option><option>Morning (9 am – 12 pm)</option><option>Afternoon (12 pm – 4 pm)</option><option>Evening (4 pm – 8 pm)</option><option>Any time</option></select></div>
+            <div class="jc-f"><label for="l-uni">University · Optional</label><select class="field" id="l-uni" data-x="University" data-uni-pick><option value="">Not decided</option></select></div>
           </div>
         </div>
         <div class="jc-mrz" aria-hidden="true"><span data-jc-m1>TC&lt;CAN&lt;&lt;YOUR&lt;NAME&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><span data-jc-m2>FREE&lt;COUNSELLING&lt;&lt;OPEN&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span></div>
@@ -553,12 +634,15 @@
 <footer class="ftr" id="site-footer">
   <div class="wrap">
     <div class="ftr-grid">
-      <div><a class="logo" href="#top"><img src="./assets/img/logo/logo-640.webp" alt="Tutee Connect — Study | Immigration" width="1600" height="652" style="height:42px" loading="lazy"></a><p style="max-width:36ch;margin:0">Our vision is to form a society where all the talent champs in the world get connected and support each other to grow in their life.</p></div>
+      <div><a class="logo" href="#top"><img src="./assets/img/logo/logo-hd.webp" alt="Tutee Connect — Study | Immigration" width="1000" height="408" style="height:42px" loading="lazy"></a><p style="max-width:36ch;margin:0">Our vision is to form a society where all the talent champs in the world get connected and support each other to grow in their life.</p></div>
       <div><h5>Explore Canada</h5><ul><li><a href="#destinations">Destinations</a></li><li><a href="#universities">University explorer</a></li><li><a href="#programmes">Programme discovery</a></li><li><a href="#admissions">Admissions &amp; intakes</a></li><li><a href="#finance">Cost estimator</a></li><li><a href="#careers">Careers after graduation</a></li><li><a href="./explore-universities.html">Full institution directory</a></li></ul></div>
       <div><h5>Offices</h5><ul><li><b style="color:var(--ivory);font-weight:600">India</b><br>1st Floor, ALA Corner Complex, Virugambakkam, Chennai - 600092</li><li><b style="color:var(--ivory);font-weight:600">UAE</b><br>Tutee Connect LLC FZ, Meydan Grandstand, Dubai, U.A.E.</li></ul></div>
-      <div><h5>Contact</h5><ul><li><a href="tel:+917010902329">+91 701-090-2329</a></li><li><a href="tel:+971553799068">+971 55-379-9068</a></li><li><a href="mailto:info@tuteeconnect.com">info@tuteeconnect.com</a></li><li><a href="https://www.instagram.com/tuteeconnect/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.linkedin.com/company/tutee-connect/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://www.facebook.com/tuteeconnect" target="_blank" rel="noopener">Facebook</a></li></ul></div>
+      <div><h5>Contact</h5><ul><li><a href="tel:+917358364959">+91 735-836-4959</a></li><li><a href="tel:+971553799068">+971 55-379-9068</a></li><li><a href="mailto:info@tuteeconnect.com">info@tuteeconnect.com</a></li><li><a href="https://www.instagram.com/tuteeconnect/" target="_blank" rel="noopener">Instagram</a> · <a href="https://www.linkedin.com/company/tutee-connect/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://www.facebook.com/tuteeconnect" target="_blank" rel="noopener">Facebook</a></li></ul></div>
     </div>
-    <p class="ftr-sign" aria-hidden="true">Your next chapter is north.</p>
+    <div class="ftr-sign-wrap">
+      <p class="ftr-words" data-sky aria-label="Study. Live. Grow. In Canada."><span class="fw" data-t="Study." style="--d:0s" aria-hidden="true">Study.</span><span class="fw" data-t="Live." style="--d:.35s" aria-hidden="true">Live.</span><span class="fw" data-t="Grow." style="--d:.7s" aria-hidden="true">Grow.</span><span class="fw-end"><em class="fw" data-t="in Canada" style="--d:1.05s" aria-hidden="true">in Canada</em><svg class="fw-leaf" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2l1.6 3.5 2.6-1-.6 4.2 3-1.6-.7 2.8 2.6 1.1-3.4 2.6.8 1.8-4.4-.7.3 4.3h-1.6l.3-4.3-4.4.7.8-1.8-3.4-2.6 2.6-1.1-.7-2.8 3 1.6-.6-4.2 2.6 1z"/></svg></span></p>
+      <p class="ftr-words-sub">Free counselling from Tutee Connect<span class="fw-dot"> · </span><a href="#contact">Start your Canada journey →</a></p>
+    </div>
     <div class="ftr-base">
       <div><a href="https://tuteeconnect.com/about.html">About us</a> · <a href="https://tuteeconnect.com/terms-and-conditions.html">Terms</a> · <a href="https://tuteeconnect.com/privacy-policy.html">Privacy</a> · © 2026 Tutee Connect. All rights reserved.</div>
       <div data-photo-credit>Photography via Wikimedia Commons: Cabbagetown, Toronto © Jay Woodworth (CC BY 2.0); Toronto skyline and Toronto Reference Library by Raysonho (CC0); Trinity College, University of Toronto (photo supplied by Tutee Connect); downtown Montréal by Andrew Welch (CC0). City cards: photos supplied by Tutee Connect.  Map: Natural Earth; lakes © OpenStreetMap contributors (ODbL).</div>
@@ -566,15 +650,41 @@
   </div>
 </footer>
 
-<a class="wa" href="https://wa.me/917010902329" target="_blank" rel="noopener" aria-label="Chat with Tutee Connect on WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2s.2-1.1.1-1.2-.1-.2-.3-.3z"/></svg></a>
+<div class="qz" data-qz role="dialog" aria-modal="true" aria-labelledby="qz-q" aria-hidden="true">
+  <div class="qz-card">
+    <div class="qz-top"><small>Find my Canada path</small><button type="button" class="qz-x" data-qz-close aria-label="Close">×</button></div>
+    <div class="qz-bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div data-qz-body></div>
+    <button type="button" class="qz-back" data-qz-back hidden>← Back</button>
+  </div>
+</div>
+<div class="mbar" data-mbar>
+  <button type="button" class="mb-q" data-qz-open><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.9 6.1L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>Find my path</button>
+  <a class="mb-c" href="#contact">Free counselling</a>
+  <a class="mb-w" href="https://wa.me/917358364959" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2s.2-1.1.1-1.2-.1-.2-.3-.3z"/></svg></a>
+</div>
+<a class="wa" href="https://wa.me/917358364959" target="_blank" rel="noopener" aria-label="Chat with Tutee Connect on WhatsApp"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2s.2-1.1.1-1.2-.1-.2-.3-.3z"/></svg></a>
 
+<script>/* instant first view (royal.css v129): show the hero copy as soon as the page is parsed instead of waiting for every script */(function(){var b=document.body;b.classList.add("loaded");[].forEach.call(document.querySelectorAll("[data-hero-title] .ln"),function(l){l.classList.add("in")});var h=document.querySelector("[data-hero]");if(h)h.classList.add("revealed");var L=document.querySelector("[data-loader]");if(L){L.classList.add("gone");setTimeout(function(){L.hidden=true},500)}})();</script>
 <script src="./assets/js/universities-data.js" defer></script>
 <script src="./assets/canada/js/leaf.js" defer></script>
 <script src="./assets/canada/js/royal.js" defer></script>
 <script src="./assets/canada/js/select.js" defer></script>
 <script src="./assets/canada/js/heroleaves.js" defer></script>
 <script src="./assets/canada/js/ask.js" defer></script>
+<script src="./assets/canada/js/askwave.js" defer></script>
+<script src="./assets/canada/js/skyline.js" defer></script>
+<script src="./assets/canada/js/menu.js" defer></script>
+<script src="./assets/canada/js/lux.js" defer></script>
+<script src="./assets/canada/js/perf.js" defer></script>
 <script src="./assets/canada/js/testimonials.js" defer></script>
 <script src="./assets/canada/js/journeycard.js" defer></script>
+<script src="./assets/canada/js/news.js" defer></script>
+
+<script>(function(){var w=document.querySelector('.wf2');if(!w)return;if(!('IntersectionObserver'in window)){w.classList.add('in');return}new IntersectionObserver(function(e,o){if(e[0].isIntersecting){w.classList.add('in');o.disconnect()}},{threshold:.3}).observe(w)})();</script>
+<script>(function(){var r=document.querySelector('[data-cpc]');if(!r)return;var c=document.createElement('div');c.className='sw-cue dark';c.setAttribute('aria-hidden','true');
+c.innerHTML='<span class="sw-ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></svg></span><span class="sw-t">Swipe for all 5 cities</span><span class="sw-bar"><i></i></span>';r.insertAdjacentElement('afterend',c);
+function u(){var m=r.scrollWidth-r.clientWidth;c.hidden=m<6;if(c.hidden)return;c.style.setProperty('--w',Math.max(.12,r.clientWidth/r.scrollWidth).toFixed(3));c.style.setProperty('--p',(r.scrollLeft/m).toFixed(3));c.classList.toggle('end',r.scrollLeft>m-6)}
+r.addEventListener('scroll',function(){if(r.scrollLeft>6)c.classList.add('used');u()},{passive:true});addEventListener('resize',u);requestAnimationFrame(u);})();</script>
 </body>
 </html>

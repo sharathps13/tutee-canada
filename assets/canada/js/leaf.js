@@ -6,8 +6,9 @@
  * Exposes window.TCLeaf. Respects prefers-reduced-motion. No dependencies. */
 (function () {
   'use strict';
-  /* scroll position cached from a passive listener so the canvas loop never forces layout */
-  var SY = window.scrollY; window.addEventListener('scroll', function () { SY = window.scrollY; }, { passive: true });
+  /* scroll position: read once at the start of each animation frame, before anything writes to
+   * the page, so reading it never forces an extra layout */
+  var SY = window.scrollY;
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
 
@@ -229,7 +230,7 @@
    * ===================================================================== */
   function hero(opts) {
     var cv = opts.canvas, heroEl = opts.hero, F, ctx, mobile;
-    var faces = big((innerWidth < 760 || matchMedia('(pointer:coarse)').matches) ? 360 : 600), small = makeSprite(160), soft = blurred(makeSprite(220), 3), bokeh = blurred(makeSprite(260), 9);
+    var faces = big((innerWidth < 760 || matchMedia('(pointer:coarse)').matches) ? 300 : 480), small = null, soft = null, bokeh = null; // depth-leaf sprites: built only if depth leaves are ever used
     var trail = [], depth = [], t0 = 0, phase = 'wait', mx = 0, my = 0, emx = 0, emy = 0, gust = 0, raf = 0, visible = true, lastTs = 0;
     var D = 4800, BLUR = null;
     /* Fairy dust: tiny gold specks in a soft gold glow — no hard edges, no beads. */
@@ -241,7 +242,7 @@
       x.fillStyle = g; x.fillRect(0, 0, S, S);
       return d;
     });
-    function size() { return mobile ? Math.min(F.w * .32, 130) : Math.max(170, Math.min(270, Math.min(F.w * .16, F.h * .3))); }
+    function size() { return mobile ? Math.min(F.w * .36, 150) : Math.max(170, Math.min(270, Math.min(F.w * .16, F.h * .3))); }
     function rest() { return mobile ? [F.w * .8, F.h * .1] : F.w < 1100 ? [F.w * .8, F.h * .14] : [F.w * .45, F.h * .26]; }
     function bez(p, a, b, c, d) { var u = 1 - p; return u * u * u * a + 3 * u * u * p * b + 3 * u * p * p * c + p * p * p * d; }
     function path(p) { // designed flight: enters top-right, sweeps across the upper sky, banks down, settles
@@ -252,7 +253,10 @@
     }
     function ease(p) { return p * p * p * (p * (p * 6 - 15) + 10); } // smootherstep: no velocity jump at either end
     function resize() {
-      var r = cv.getBoundingClientRect(); var dpr = Math.min(window.devicePixelRatio || 1, (r.width < 760 || matchMedia('(pointer:coarse)').matches) ? 1 : 1.5, Math.sqrt(2.4e6 / Math.max(1, r.width * r.height))); // pixel budget keeps big screens at 60fps
+      var r = cv.getBoundingClientRect();
+      // phones fire resize while the address bar slides; if the canvas box didn't really change, keep drawing as is
+      if (F && Math.abs(r.width - F.w) < 1 && Math.abs(r.height - F.h) < 1) { refreshWP(); return; }
+      var dpr = Math.min(window.devicePixelRatio || 1, (r.width < 760 || matchMedia('(pointer:coarse)').matches) ? 1 : 1.5, Math.sqrt(2.4e6 / Math.max(1, r.width * r.height))); // pixel budget keeps big screens at 60fps
       cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
       ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       F = { w: r.width, h: r.height }; mobile = F.w < 760;
@@ -261,6 +265,7 @@
       for (var i = 0; i < n; i++) depth.push(newDepth(true, i));
     }
     function newDepth(initial, i) {
+      if (!small) { small = makeSprite(160); soft = blurred(makeSprite(220), 3); bokeh = blurred(makeSprite(260), 9); }
       var near = (i % 4 === 3); // every 4th leaf is close to the camera, large and out of focus
       return { near: near, x: initial ? Math.random() * F.w : F.w + 80, y: initial ? Math.random() * F.h * .9 : Math.random() * F.h * .6,
         s: near ? 120 + Math.random() * 90 : 30 + Math.random() * 30, vx: -(near ? .5 : .18) - Math.random() * .25, vy: (near ? .22 : .1) + Math.random() * .15,
@@ -270,7 +275,7 @@
     function refreshWP() { WP = (opts.waypoints ? opts.waypoints() : []); wpStamp = performance.now(); }
     function wpPos(w) { return [w.x * F.w, w.y * F.h]; }
     function journey() {
-      if (!WP.length || performance.now() - wpStamp > 2500) refreshWP();
+      if (!WP.length || performance.now() - wpStamp > (mobile ? 6000 : 2500)) refreshWP();
       var c = SY + F.h * .5, res = { seg: 0, t: 0, a: WP[0], b: WP[0] || { x: .5, y: .5, s: 1 }, travel: 0, arrive: false };
       if (WP.length < 2) return res;
       for (var i = 0; i < WP.length - 1; i++) {
@@ -287,7 +292,7 @@
     function burstAt(P, n) { for (var i = 0; i < n; i++) { var a = Math.random() * 6.283, v = Math.random() * 2.2 + .3; trail.push({ x: P[0], y: P[1], vx: Math.cos(a) * v, vy: Math.sin(a) * v * .7, life: 1, r: .8 + Math.random() * 2.4, ci: Math.random() < .7 ? 0 : 1 }); } }
     // ambient floating red particles (the signature dots), dense in the hero and lighter below
     function seedAmbient() {
-      AMB = []; var n = mobile ? 26 : 60;
+      AMB = []; var n = mobile ? 14 : 40;
       for (var i = 0; i < n; i++) AMB.push({ x: Math.random() * F.w, y: Math.random() * F.h, r: .6 + Math.random() * (Math.random() < .12 ? 2.4 : 1.2), vy: -.08 - Math.random() * .25, vx: (Math.random() - .5) * .15, ph: Math.random() * 6.28, ci: Math.random() < .6 ? 0 : Math.random() < .5 ? 1 : 2 });
     }
     function drawAmbient(dt, heroFade) {
@@ -304,7 +309,7 @@
     }
     function scrollP() { var y = SY, h = F.h; return Math.max(0, Math.min(1.35, y / (h * 1.05))); }
     function draw(ts) {
-      raf = 0; if (!lastTs) lastTs = ts; var dt = Math.min(48, ts - lastTs); lastTs = ts;
+      raf = 0; SY = window.scrollY; if (!lastTs) lastTs = ts; var dt = Math.min(48, ts - lastTs); lastTs = ts;
       var sp = scrollP();
       ctx.clearRect(0, 0, F.w, F.h);
       var heroFade = Math.max(0, 1 - sp * 1.1);
@@ -332,14 +337,14 @@
       var J = journey(), se = J.travel;
       if (J.seg > 0 || J.t > 0) {
         var from = J.seg === 0 ? P : wpPos(J.a), to = wpPos(J.b), t = J.t;
-        var sw = Math.sin(t * Math.PI) * (J.seg % 2 ? -1 : 1) * F.w * (mobile ? .06 : .09); // curved path between stops
+        var sw = Math.sin(t * Math.PI) * (J.seg % 2 ? -1 : 1) * F.w * .09; // curved path between stops
         P = [from[0] + (to[0] - from[0]) * t + sw, from[1] + (to[1] - from[1]) * t + Math.sin(t * Math.PI * 2) * F.h * .03];
         var sa = J.seg === 0 ? 1 : J.a.s, sb = J.b.s;
         S = S * (sa + (sb - sa) * t);
         if (J.seg > 0 || t > .02) P = [P[0] + Math.sin(idleT * .7) * S * .1, P[1] + Math.sin(idleT * 1.1) * S * .08];
       }
       // never teleport: ease the drawn position/size toward the computed target
-      var kk = 1 - Math.exp(-dt / 110);
+      var kk = 1 - Math.exp(-dt / (mobile ? 320 : 110)); // phones: softer follow so touch-scroll jumps glide
       if (!sP || phase === 'flight') { sP = [P[0], P[1]]; sS = S; } else { sP[0] += (P[0] - sP[0]) * kk; sP[1] += (P[1] - sP[1]) * kk; sS += (S - sS) * kk; }
       P = [sP[0], sP[1]]; S = sS;
       // hover: tactile tilt + lift when the cursor is over the leaf
