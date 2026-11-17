@@ -686,5 +686,11 @@
 c.innerHTML='<span class="sw-ar"><svg viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></svg></span><span class="sw-t">Swipe for all 5 cities</span><span class="sw-bar"><i></i></span>';r.insertAdjacentElement('afterend',c);
 function u(){var m=r.scrollWidth-r.clientWidth;c.hidden=m<6;if(c.hidden)return;c.style.setProperty('--w',Math.max(.12,r.clientWidth/r.scrollWidth).toFixed(3));c.style.setProperty('--p',(r.scrollLeft/m).toFixed(3));c.classList.toggle('end',r.scrollLeft>m-6)}
 r.addEventListener('scroll',function(){if(r.scrollLeft>6)c.classList.add('used');u()},{passive:true});addEventListener('resize',u);requestAnimationFrame(u);})();</script>
+<script>/* v132: keep the Ask Tutee bar in view while typing on phones */
+(function(){var i=document.querySelector("[data-ask-input]");if(!i)return;var f=i.closest("form"),vv=window.visualViewport,h=document.documentElement;
+function fit(){if(document.activeElement!==i||!vv)return;var r=f.getBoundingClientRect(),top=vv.offsetTop,bot=top+vv.height;if(r.bottom>bot-12||r.top<top+12)scrollBy({top:r.bottom-(bot-16),behavior:"auto"});}
+i.addEventListener("focus",function(){h.classList.add("kb-open");setTimeout(fit,320);setTimeout(fit,650);});
+i.addEventListener("blur",function(){h.classList.remove("kb-open");});
+if(vv)vv.addEventListener("resize",function(){if(document.activeElement===i)fit();});})();</script>
 </body>
 </html>

@@ -3739,3 +3739,7 @@ button:not(:disabled),[role=tab],summary,select,label[for]{cursor:pointer}
 .jc-form:not(.open) .jc-front{position:relative!important;inset:auto!important;width:100%!important;aspect-ratio:1.586/1!important;height:auto!important;min-height:0!important;max-height:none!important}
 .jc-form:not(.open) .jc-card{position:absolute!important;inset:0!important;overflow:hidden!important}
 .jc-form:not(.open) .jc-3d{height:auto!important;min-height:0!important}
+
+/* v132: AI chat input stays put when the keyboard opens on phones */
+.ask-in input{font-size:16px!important}
+html.kb-open .mbar{opacity:0!important;pointer-events:none!important;transform:translateY(120%)!important}
