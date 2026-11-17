@@ -3743,3 +3743,6 @@ button:not(:disabled),[role=tab],summary,select,label[for]{cursor:pointer}
 /* v132: AI chat input stays put when the keyboard opens on phones */
 .ask-in input{font-size:16px!important}
 html.kb-open .mbar{opacity:0!important;pointer-events:none!important;transform:translateY(120%)!important}
+
+/* v134: Ask Tutee bar pinned above the phone keyboard while typing */
+.ask-in.kb-pin{position:fixed!important;z-index:9999!important;margin:0!important;transform:none!important;box-shadow:0 10px 40px rgba(0,0,0,.45)}
