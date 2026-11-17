@@ -698,5 +698,10 @@ i.addEventListener("focus",pin);
 i.addEventListener("blur",function(){setTimeout(function(){if(document.activeElement!==i)unpin();},50);});
 f.addEventListener("submit",function(){setTimeout(q,60);});
 vv.addEventListener("resize",q);vv.addEventListener("scroll",q);addEventListener("scroll",q,{passive:true});})();</script>
+<div class="cpill" data-cpill aria-hidden="true"><span>Your Canada plan</span><a href="#contact" tabindex="-1">Get free counselling <i aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></a></div>
+<script>/* v135: floating "Your Canada plan" pill (desktop) — appears after the hero, hides at the form */
+(function(){var p=document.querySelector("[data-cpill]");if(!p)return;var a=p.querySelector("a"),c=document.getElementById("contact"),q=0;
+function u(){q=0;var r=c?c.getBoundingClientRect():null,on=scrollY>innerHeight*.7&&!(r&&r.top<innerHeight*.85&&r.bottom>80);p.classList.toggle("on",on);p.setAttribute("aria-hidden",on?"false":"true");a.tabIndex=on?0:-1;}
+addEventListener("scroll",function(){if(!q)q=requestAnimationFrame(u);},{passive:true});addEventListener("resize",u);u();})();</script>
 </body>
 </html>
