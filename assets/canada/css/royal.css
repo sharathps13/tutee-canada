@@ -3735,55 +3735,7 @@ button:not(:disabled),[role=tab],summary,select,label[for]{cursor:pointer}
 .hdr-cta:hover .gr-ring i,.hdr-cta:hover .gr-spill i{animation-play-state:running}
 @media(hover:none){.gr-ring i,.gr-spill i{animation:none!important}.gr-ring i:first-child{transform:none!important}.gr-spill i{transform:translateX(50%)!important}}
 
-/* ==========================================================================
-   v130 · counselling card front as a real card (like the USA page's "USA Express"):
-   ivory security paper with guilloche text, an engraved double border, the logo,
-   "CANADA EXPRESS", a silver maple chip, an engraved Parliament (Peace Tower) oval,
-   serial number, "Free counselling" ribbon, year, the holder name (live from the form)
-   and a "Claim free counselling" button. Credit-card proportions at every width.
-   ========================================================================== */
-.jc-front.cx{position:relative!important;inset:auto!important;display:block!important;width:100%;aspect-ratio:1.586/1!important;min-height:0!important;padding:0!important;
-  border-radius:26px;overflow:hidden;cursor:pointer;text-align:left;font:inherit;color:#2a0d14;container-type:inline-size;
-  background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22420%22%20height%3D%2252%22%3E%3Cg%20font-family%3D%22Arial%2Csans-serif%22%20font-size%3D%228.5%22%20letter-spacing%3D%222.2%22%20fill%3D%22%23a0303f%22%20fill-opacity%3D%22.09%22%3E%3Cpath%20id%3D%22a%22%20d%3D%22M0%2014%20Q105%206%20210%2014%20T420%2014%22%20fill%3D%22none%22/%3E%3Cpath%20id%3D%22b%22%20d%3D%22M0%2040%20Q105%2048%20210%2040%20T420%2040%22%20fill%3D%22none%22/%3E%3Ctext%3E%3CtextPath%20href%3D%22%23a%22%3ETUTEE%20CONNECT%20%C2%B7%20STUDY%20IN%20CANADA%20%C2%B7%20TUTEE%20CONNECT%20%C2%B7%20STUDY%20IN%20CANADA%20%C2%B7%20TUTEE%20CONNECT%20%C2%B7%20STUDY%20IN%20CANADA%20%C2%B7%20TUTEE%20CONNECT%20%C2%B7%20STUDY%20IN%20CANADA%20%C2%B7%20%3C/textPath%3E%3C/text%3E%3Ctext%3E%3CtextPath%20href%3D%22%23b%22%3EFREE%20COUNSELLING%20%C2%B7%20TUTEE%20CONNECT%20%C2%B7%20FREE%20COUNSELLING%20%C2%B7%20TUTEE%20CONNECT%20%C2%B7%20FREE%20COUNSELLING%20%C2%B7%20TUTEE%20CONNECT%20%C2%B7%20FREE%20COUNSELLING%20%C2%B7%20TUTEE%20CONNECT%20%C2%B7%20%3C/textPath%3E%3C/text%3E%3C/g%3E%3Cpath%20d%3D%22M0%2027%20Q105%2021%20210%2027%20T420%2027%22%20fill%3D%22none%22%20stroke%3D%22%23a0303f%22%20stroke-opacity%3D%22.12%22%20stroke-width%3D%22.8%22/%3E%3C/svg%3E") 0 0/420px 52px repeat,radial-gradient(120% 90% at 50% 40%,#fff9f2 0%,#fbe9e4 55%,#f3d5d0 100%)!important;
-  box-shadow:0 40px 80px -36px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.6) inset,0 0 0 1px rgba(122,18,34,.2)!important;filter:none!important}
-.jc-form:not(.grown) .jc-front.cx{padding:0!important}
-.jc-front.cx::before,.jc-front.cx::after{display:none!important}
-.cx-frame{position:absolute;inset:3.2cqw;border-radius:2.4cqw;pointer-events:none;
-  border:1.3cqw solid transparent;background:repeating-linear-gradient(45deg,#7a1222 0 .35cqw,transparent .35cqw .7cqw) border-box;
-  -webkit-mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) padding-box exclude,linear-gradient(#000 0 0);opacity:.85}
-.cx-frame::after{content:"";position:absolute;inset:.5cqw;border:.25cqw solid rgba(122,18,34,.7);border-radius:1.6cqw}
-.cx-logo{position:absolute;left:6.6cqw;top:6.4cqw;width:8.6cqw;height:8.6cqw;border-radius:50%;background:#fff;box-shadow:0 0 0 .4cqw rgba(122,18,34,.25)}
-.cx-brand{position:absolute;left:14cqw;right:14cqw;top:7cqw;text-align:center;font:800 5.3cqw/1 var(--sans);letter-spacing:.03em;text-transform:uppercase;color:#3b0a14}
-.cx-free{position:absolute;right:6.6cqw;top:7.4cqw;font:900 4.2cqw/1 var(--serif);letter-spacing:.06em;color:transparent;-webkit-text-stroke:.28cqw #b3203a;text-shadow:.35cqw .35cqw 0 rgba(179,32,58,.25)}
-.cx-chip{position:absolute;left:8cqw;top:30cqw;display:grid;place-items:center;width:12cqw;height:9.4cqw;border-radius:1.6cqw;
-  background:linear-gradient(135deg,#f4f4f4 0%,#c9cdd2 30%,#f8f8f8 52%,#aeb3b9 78%,#e7e9eb 100%);box-shadow:inset 0 0 0 .2cqw rgba(0,0,0,.18),0 .6cqw 1.2cqw -.4cqw rgba(0,0,0,.45)}
-.cx-chip svg{width:5cqw;height:5cqw;fill:#8a1828;opacity:.85}
-.cx-portrait{position:absolute;left:50%;top:15.5cqw;width:22cqw;height:28.5cqw;transform:translateX(-50%);border-radius:50%;padding:.7cqw;
-  background:repeating-radial-gradient(circle at 50% 50%,rgba(122,18,34,.18) 0 .2cqw,transparent .2cqw .9cqw),#fbf1ea;box-shadow:0 0 0 .35cqw #7a1222,0 0 0 .9cqw #fbf1ea,0 0 0 1.15cqw rgba(122,18,34,.5)}
-.cx-oval{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;box-shadow:inset 0 0 0 .25cqw rgba(122,18,34,.6)}
-.cx-oval img{width:100%;height:100%;object-fit:cover;object-position:52% 30%;display:block}
-.cx-serial{position:absolute;right:6.8cqw;top:24.5cqw;display:flex;align-items:center;gap:1.4cqw;font:500 3.3cqw/1 var(--sans);letter-spacing:.06em;color:#2a0d14;font-variant-numeric:tabular-nums}
-.cx-serial svg{width:3.4cqw;height:3.4cqw;fill:none;stroke:#2a0d14;stroke-width:2.2;stroke-linecap:round}
-.cx-ribbon{position:absolute;right:6.6cqw;top:30.5cqw;width:24cqw;height:5cqw;display:grid;place-items:center}
-.cx-ribbon svg{position:absolute;inset:0;width:100%;height:100%;fill:#8a1828}
-.cx-ribbon span{position:relative;font:700 1.85cqw/1 var(--serif);letter-spacing:.12em;text-transform:uppercase;color:#fff3e3}
-.cx-year{position:absolute;right:18.6cqw;top:37.6cqw;font:500 3.6cqw/1 var(--sans);color:#2a0d14;transform:translateX(50%)}
-.cx-name{position:absolute;left:8cqw;bottom:10.5cqw;max-width:42cqw;font:500 3.8cqw/1.1 var(--sans);letter-spacing:.02em;text-transform:uppercase;color:#6b4a50;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.jc-front.cx.named .cx-name{color:#2a0d14}
-.cx-claim{position:absolute;right:6.6cqw;bottom:8.4cqw;display:grid;justify-items:end;gap:1.3cqw}
-.cx-btn{display:inline-flex;align-items:center;gap:1.6cqw;padding:2.2cqw 3.6cqw;border-radius:999px;background:linear-gradient(180deg,#9b1b2e,#6e0f1d);color:#fff;
-  font:600 2.6cqw/1 var(--sans);box-shadow:0 0 0 .3cqw rgba(255,255,255,.35) inset,0 1.4cqw 3cqw -1cqw rgba(110,15,29,.8);transition:transform .35s var(--ease)}
-.cx-btn i{font-style:normal;transition:transform .35s var(--ease)}
-.jc-front.cx:hover .cx-btn{transform:translateY(-.4cqw)}.jc-front.cx:hover .cx-btn i{transform:translateX(.8cqw)}
-.cx-hint{font:500 1.75cqw/1.2 var(--sans);color:#5a3a40}
-.cx-hint i{font-style:normal;display:inline-block;margin-right:.6cqw}
-.cx-micro{position:absolute;left:6cqw;right:6cqw;bottom:4.6cqw;overflow:hidden;white-space:nowrap;font:600 1.25cqw/1 var(--sans);letter-spacing:.14em;color:rgba(122,18,34,.55)}
-.cx-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 45%,transparent 60%) -150% 0/60% 100% no-repeat;animation:cxSheen 7s ease-in-out 1.5s infinite}
-@keyframes cxSheen{0%,55%{background-position:-150% 0}100%{background-position:250% 0}}
-.jc-front.cx:focus-visible{outline:3px solid #e3506a;outline-offset:4px}
-@media(prefers-reduced-motion:reduce){.cx-sheen{animation:none}}
-/* the old front styles must not reach the new card */
-.jc-front.cx .jc-tap,.jc-front.cx .jc-fholo{display:none!important}
-.jc-front.cx>span,.jc-front.cx>img{position:absolute!important;z-index:1}
-.jc-front.cx>.cx-frame{z-index:0}.jc-front.cx>.cx-sheen{z-index:3}
-.jc-front.cx .cx-oval img{max-width:none}
+/* v131: keep the counselling card front at true card proportions whenever the card is closed */
+.jc-form:not(.open) .jc-front{position:relative!important;inset:auto!important;width:100%!important;aspect-ratio:1.586/1!important;height:auto!important;min-height:0!important;max-height:none!important}
+.jc-form:not(.open) .jc-card{position:absolute!important;inset:0!important;overflow:hidden!important}
+.jc-form:not(.open) .jc-3d{height:auto!important;min-height:0!important}
